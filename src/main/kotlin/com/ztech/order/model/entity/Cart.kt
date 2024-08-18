@@ -4,8 +4,14 @@ import jakarta.persistence.*
 
 @Entity
 @NamedEntityGraph(
-    name = "Cart.inventory",
-    attributeNodes = [NamedAttributeNode("inventory")]
+    name = "Cart.inventory.product",
+    attributeNodes = [NamedAttributeNode("inventory"), NamedAttributeNode("inventory", subgraph = "inventoryProduct")],
+    subgraphs = [
+        NamedSubgraph(
+            name = "inventoryProduct",
+            attributeNodes = [NamedAttributeNode("product")]
+        )
+    ]
 )
 @Table(
     name = "cart", uniqueConstraints = [UniqueConstraint(columnNames = ["inventory_id", "customer_id"])]

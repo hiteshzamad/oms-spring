@@ -4,6 +4,7 @@ import com.ztech.order.core.AbstractService
 import com.ztech.order.core.ServiceResponse
 import com.ztech.order.core.Status
 import com.ztech.order.model.entity.Account
+import com.ztech.order.model.entity.SavedAddress
 import com.ztech.order.repository.SellerRepository
 import org.springframework.stereotype.Service
 import com.ztech.order.model.domain.Seller as SellerDomain
@@ -35,7 +36,7 @@ class SellerServiceImpl(
     }
 
     fun getSellerByAccountId(accountId: Int) = tryCatchDaoCall {
-        val seller = sellerRepository.findByAccountAccountId((accountId))
+        val seller = sellerRepository.findByAccountAccountId(accountId)
         ServiceResponse(Status.SUCCESS, seller.toDomain())
     }
 
@@ -44,11 +45,4 @@ class SellerServiceImpl(
         ServiceResponse(Status.SUCCESS, seller)
     }
 
-    fun SellerEntity.toDomain(): SellerDomain {
-        return SellerDomain(
-            sellerId = this.sellerId!!,
-            accountId = this.account.accountId!!,
-            name = name,
-        )
-    }
 }

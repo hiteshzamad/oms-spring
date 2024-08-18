@@ -4,7 +4,9 @@ import com.ztech.order.core.AbstractService
 import com.ztech.order.core.ServiceResponse
 import com.ztech.order.core.Status
 import com.ztech.order.repository.InventoryRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import com.ztech.order.model.domain.Inventory as InventoryDomain
 import com.ztech.order.model.entity.Inventory as InventoryEntity
 import com.ztech.order.model.entity.Product as ProductEntity
@@ -21,21 +23,18 @@ class InventoryServiceImpl(
             inventory.quantity = quantity
             inventory.price = price.toBigDecimal()
         })
-        ServiceResponse(Status.SUCCESS, inventory.toDomain())
+        ServiceResponse(Status.SUCCESS, inventory.toDomain(false))
     }
 
-    fun getInventories() = tryCatchDaoCall {
-        val inventories = inventoryRepository.findAll().map { it.toDomain() }
-        ServiceResponse(Status.SUCCESS, inventories)
-    }
-
-    fun getInventoriesByProductId(productId: Int) = tryCatchDaoCall {
-        val inventory = inventoryRepository.findByProductProductId(productId).map { it.toDomain() }
+    fun getInventoriesByProductName(name: String, page: Int, pageSize: Int) = tryCatchDaoCall {
+        val inventory = inventoryRepository.findByProductNameContainingIgnoreCase(name, PageRequest.of(page, pageSize))
+            .map { it.toDomain() }
         ServiceResponse(Status.SUCCESS, inventory)
     }
 
-    fun getInventoriesBySellerId(sellerId: Int) = tryCatchDaoCall {
-        val inventories = inventoryRepository.findBySellerSellerId(sellerId).map { it.toDomain() }
+    fun getInventoriesBySellerId(sellerId: Int, page: Int, pageSize: Int) = tryCatchDaoCall {
+        val inventories =
+            inventoryRepository.findBySellerSellerId(sellerId, PageRequest.of(page, pageSize)).map { it.toDomain() }
         ServiceResponse(Status.SUCCESS, inventories)
     }
 
@@ -55,7 +54,7 @@ class InventoryServiceImpl(
             Status.SUCCESS -> responseGetInventory.data!!.let { inventory ->
                 val newEntity = InventoryEntity(inventory.inventoryId)
                 newEntity.seller = SellerEntity(inventory.sellerId)
-                newEntity.product = ProductEntity(inventory.productId)
+                newEntity.product = ProductEntity(inventory.product!!.productId)
                 newEntity.quantity = quantity
                 newEntity.price = price.toBigDecimal()
                 val updatedEntity = inventoryRepository.save(newEntity)
@@ -65,16 +64,10 @@ class InventoryServiceImpl(
         }
     }
 
+    @Transactional
     fun deleteInventory(sellerId: Int, inventoryId: Int) = tryCatchDaoCall {
         inventoryRepository.deleteBySellerSellerIdAndInventoryId(sellerId, inventoryId)
         ServiceResponse<InventoryDomain>(Status.SUCCESS)
     }
 
-    private fun InventoryEntity.toDomain() = InventoryDomain(
-        inventoryId = inventoryId!!,
-        sellerId = seller.sellerId!!,
-        productId = product.productId!!,
-        quantity = quantity,
-        price = price.toDouble()
-    )
 }

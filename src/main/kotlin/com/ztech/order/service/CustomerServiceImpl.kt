@@ -43,11 +43,4 @@ class CustomerServiceImpl(
         ServiceResponse(Status.SUCCESS, customer)
     }
 
-    fun CustomerEntity.toDomain(): CustomerDomain {
-        return CustomerDomain(
-            customerId = this.customerId!!,
-            accountId = this.account.accountId!!,
-            name = name,
-        )
-    }
 }

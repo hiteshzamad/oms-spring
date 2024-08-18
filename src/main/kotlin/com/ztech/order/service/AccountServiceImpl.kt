@@ -61,15 +61,4 @@ class AccountServiceImpl(
             else -> responseGetAccount
         }
     }
-
-    private fun AccountEntity.toDomain(): AccountDomain {
-        return AccountDomain(
-            accountId = this.accountId!!,
-            username = this.username,
-            password = this.password,
-            email = this.email,
-            mobile = this.mobile,
-            createdAt = this.createdAt
-        )
-    }
 }

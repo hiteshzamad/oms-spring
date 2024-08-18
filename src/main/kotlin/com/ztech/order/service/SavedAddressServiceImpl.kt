@@ -4,7 +4,9 @@ import com.ztech.order.core.AbstractService
 import com.ztech.order.core.ServiceResponse
 import com.ztech.order.core.Status
 import com.ztech.order.repository.SavedAddressRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import com.ztech.order.model.domain.SavedAddress as SavedAddressDomain
 import com.ztech.order.model.entity.Customer as CustomerEntity
 import com.ztech.order.model.entity.SavedAddress as SavedAddressEntity
@@ -40,8 +42,9 @@ class SavedAddressServiceImpl(
         ServiceResponse(Status.SUCCESS, address.toDomain())
     }
 
-    fun getSavedAddressesByCustomerId(customerId: Int) = tryCatchDaoCall {
-        val addresses = savedAddressRepository.findByCustomerCustomerId(customerId).map { it.toDomain() }
+    fun getSavedAddressesByCustomerId(customerId: Int, page: Int, pageSize: Int) = tryCatchDaoCall {
+        val addresses = savedAddressRepository.findByCustomerCustomerId(customerId, PageRequest.of(page, pageSize))
+            .map { it.toDomain() }
         ServiceResponse(Status.SUCCESS, addresses)
     }
 
@@ -65,42 +68,29 @@ class SavedAddressServiceImpl(
     ) = tryCatchDaoCall {
         val responseGetAddress = getSavedAddressByCustomerIdAndSavedAddressId(customerId, savedAddressId)
         when (responseGetAddress.status) {
-            Status.SUCCESS ->
-                responseGetAddress.data!!.let { address ->
-                    val newEntity = SavedAddressEntity(address.addressId)
-                    newEntity.customer = CustomerEntity(address.customerId)
-                    newEntity.name = name
-                    newEntity.mobile = mobile
-                    newEntity.address1 = address1
-                    newEntity.address2 = address2
-                    newEntity.address3 = address3
-                    newEntity.city = city
-                    newEntity.state = state
-                    newEntity.country = country
-                    newEntity.pincode = pincode
-                    val updatedEntity = savedAddressRepository.save(newEntity)
-                    ServiceResponse(Status.SUCCESS, updatedEntity.toDomain())
-                }
+            Status.SUCCESS -> responseGetAddress.data!!.let { address ->
+                val newEntity = SavedAddressEntity(address.addressId)
+                newEntity.customer = CustomerEntity(address.customerId)
+                newEntity.name = name
+                newEntity.mobile = mobile
+                newEntity.address1 = address1
+                newEntity.address2 = address2
+                newEntity.address3 = address3
+                newEntity.city = city
+                newEntity.state = state
+                newEntity.country = country
+                newEntity.pincode = pincode
+                val updatedEntity = savedAddressRepository.save(newEntity)
+                ServiceResponse(Status.SUCCESS, updatedEntity.toDomain())
+            }
             else -> responseGetAddress
         }
     }
 
+    @Transactional
     fun deleteSavedAddress(customerId: Int, savedAddressId: Int) = tryCatchDaoCall {
         savedAddressRepository.deleteByCustomerCustomerIdAndSavedAddressId(customerId, savedAddressId)
         ServiceResponse<SavedAddressDomain>(Status.SUCCESS)
     }
 
-    private fun SavedAddressEntity.toDomain() = SavedAddressDomain(
-        addressId = savedAddressId!!,
-        customerId = customer.customerId!!,
-        name = name,
-        mobile = mobile,
-        address1 = address1,
-        address2 = address2,
-        address3 = address3,
-        city = city,
-        state = state,
-        country = country,
-        pincode = pincode,
-    )
 }

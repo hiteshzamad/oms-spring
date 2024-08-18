@@ -27,7 +27,15 @@ class SellerInventoryController(
                 status, mapOf(
                     "inventoryId" to data!!.inventoryId,
                     "sellerId" to data.sellerId,
-                    "productId" to data.productId,
+                    "product" to data.product?.let { product ->
+                        mapOf(
+                            "productId" to product.productId,
+                            "name" to product.name,
+                            "category" to product.category,
+                            "measure" to product.measure,
+                            "size" to product.size
+                        )
+                    },
                     "quantity" to data.quantity,
                     "price" to data.price
                 )
@@ -38,14 +46,24 @@ class SellerInventoryController(
     @GetMapping
     fun getInventories(
         @PathVariable sellerId: Int,
+        @RequestParam(defaultValue = "10") pageSize: Int,
+        @RequestParam(defaultValue = "0") page: Int,
     ): ResponseEntity<ControllerResponse> {
-        val response = inventoryService.getInventoriesBySellerId(sellerId)
+        val response = inventoryService.getInventoriesBySellerId(sellerId, page, pageSize)
         with(response) {
             return if (status == Status.SUCCESS) responseEntity(status, mapOf("inventories" to data!!.map {
                 mapOf(
                     "inventoryId" to it.inventoryId,
                     "sellerId" to it.sellerId,
-                    "productId" to it.productId,
+                    "product" to it.product?.let { product ->
+                        mapOf(
+                            "productId" to product.productId,
+                            "name" to product.name,
+                            "category" to product.category,
+                            "measure" to product.measure,
+                            "size" to product.size
+                        )
+                    },
                     "quantity" to it.quantity,
                     "price" to it.price
                 )
@@ -64,7 +82,15 @@ class SellerInventoryController(
                 status, mapOf(
                     "inventoryId" to data!!.inventoryId,
                     "sellerId" to data.sellerId,
-                    "productId" to data.productId,
+                    "product" to data.product?.let { product ->
+                        mapOf(
+                            "productId" to product.productId,
+                            "name" to product.name,
+                            "category" to product.category,
+                            "measure" to product.measure,
+                            "size" to product.size
+                        )
+                    },
                     "quantity" to data.quantity,
                     "price" to data.price
                 )
@@ -85,7 +111,15 @@ class SellerInventoryController(
                 status, mapOf(
                     "inventoryId" to data!!.inventoryId,
                     "sellerId" to data.sellerId,
-                    "productId" to data.productId,
+                    "product" to data.product?.let { product ->
+                        mapOf(
+                            "productId" to product.productId,
+                            "name" to product.name,
+                            "category" to product.category,
+                            "measure" to product.measure,
+                            "size" to product.size
+                        )
+                    },
                     "quantity" to data.quantity,
                     "price" to data.price
                 )

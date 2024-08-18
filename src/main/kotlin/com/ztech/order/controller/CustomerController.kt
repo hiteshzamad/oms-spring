@@ -13,18 +13,6 @@ class CustomerController(
     private val customerService: CustomerServiceImpl
 ) {
 
-    @GetMapping
-    fun getCustomers(): ResponseEntity<ControllerResponse> {
-        val response = customerService.getCustomers()
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(status, mapOf("customers" to data!!.map {
-                mapOf(
-                    "customerId" to it.customerId,
-                    "name" to it.name
-                )
-            })) else responseEntity(status)
-        }
-    }
 
     @GetMapping("/{customerId}")
     fun getCustomer(

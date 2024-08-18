@@ -45,8 +45,10 @@ class CustomerSavedAddressController(
     @GetMapping
     fun getSavedAddresses(
         @PathVariable customerId: Int,
+        @RequestParam(defaultValue = "10") pageSize: Int,
+        @RequestParam(defaultValue = "0") page: Int,
     ): ResponseEntity<ControllerResponse> {
-        val response = savedAddressService.getSavedAddressesByCustomerId(customerId)
+        val response = savedAddressService.getSavedAddressesByCustomerId(customerId, page, pageSize)
         with(response) {
             return if (status == Status.SUCCESS) responseEntity(status, mapOf("savedAddresses" to data!!.map {
                 mapOf(

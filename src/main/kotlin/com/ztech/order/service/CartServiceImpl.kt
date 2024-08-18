@@ -4,7 +4,9 @@ import com.ztech.order.core.AbstractService
 import com.ztech.order.core.ServiceResponse
 import com.ztech.order.core.Status
 import com.ztech.order.repository.CartRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import com.ztech.order.model.domain.Cart as CartDomain
 import com.ztech.order.model.entity.Cart as CartEntity
 import com.ztech.order.model.entity.Customer as CustomerEntity
@@ -20,12 +22,13 @@ class CartServiceImpl(
                 cart.customer = CustomerEntity(customerId)
                 cart.inventory = InventoryEntity(inventoryId)
                 cart.quantity = quantity
-            }).toDomain()
+            }).toDomain(false)
         )
     }
 
-    fun getCartsByCustomerId(customerId: Int) = tryCatchDaoCall {
-        ServiceResponse(Status.SUCCESS, cartRepository.findByCustomerCustomerId(customerId).map { it.toDomain() })
+    fun getCartsByCustomerId(customerId: Int, page: Int, pageSize: Int) = tryCatchDaoCall {
+        ServiceResponse(Status.SUCCESS,
+            cartRepository.findByCustomerCustomerId(customerId, PageRequest.of(page, pageSize)).map { it.toDomain() })
     }
 
     fun getCartByCustomerIdAndCartId(customerId: Int, cartId: Int) = tryCatchDaoCall {
@@ -40,7 +43,7 @@ class CartServiceImpl(
             Status.SUCCESS -> responseGetCart.data!!.let { cart ->
                 val newEntity = CartEntity(cart.cartId)
                 newEntity.customer = CustomerEntity(cart.cartId)
-                newEntity.inventory = InventoryEntity(cart.inventoryId)
+                newEntity.inventory = InventoryEntity(cart.inventory!!.inventoryId)
                 newEntity.quantity = quantity
                 val updatedEntity = cartRepository.save(newEntity)
                 ServiceResponse(Status.SUCCESS, updatedEntity.toDomain())
@@ -49,15 +52,10 @@ class CartServiceImpl(
         }
     }
 
+    @Transactional
     fun deleteCart(customerId: Int, cartId: Int) = tryCatchDaoCall {
         cartRepository.deleteByCustomerCustomerIdAndCartId(customerId, cartId)
         ServiceResponse<CartDomain>(Status.SUCCESS)
     }
 
-    private fun CartEntity.toDomain() = CartDomain(
-        cartId = cartId!!,
-        customerId = customer.customerId!!,
-        inventoryId = inventory.inventoryId!!,
-        quantity = quantity,
-    )
 }

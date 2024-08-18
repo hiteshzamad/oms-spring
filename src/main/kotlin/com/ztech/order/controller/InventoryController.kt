@@ -5,10 +5,7 @@ import com.ztech.order.core.Status
 import com.ztech.order.core.responseEntity
 import com.ztech.order.service.InventoryServiceImpl
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/inventories")
@@ -17,14 +14,26 @@ class InventoryController(
 ) {
 
     @GetMapping
-    fun getInventories(): ResponseEntity<ControllerResponse> {
-        val response = inventoryService.getInventories()
+    fun getInventories(
+        @RequestParam(defaultValue = "") name: String,
+        @RequestParam(defaultValue = "10") pageSize: Int,
+        @RequestParam(defaultValue = "0") page: Int,
+    ): ResponseEntity<ControllerResponse> {
+        val response = inventoryService.getInventoriesByProductName(name, page, pageSize)
         with(response) {
             return if (status == Status.SUCCESS) responseEntity(status, mapOf("inventories" to data!!.map {
                 mapOf(
                     "inventoryId" to it.inventoryId,
                     "sellerId" to it.sellerId,
-                    "productId" to it.productId,
+                    "product" to it.product?.let { product ->
+                        mapOf(
+                            "productId" to product.productId,
+                            "name" to product.name,
+                            "category" to product.category,
+                            "measure" to product.measure,
+                            "size" to product.size
+                        )
+                    },
                     "quantity" to it.quantity,
                     "price" to it.price
                 )
@@ -42,7 +51,15 @@ class InventoryController(
                 status, mapOf(
                     "inventoryId" to data!!.inventoryId,
                     "sellerId" to data.sellerId,
-                    "productId" to data.productId,
+                    "product" to data.product?.let { product ->
+                        mapOf(
+                            "productId" to product.productId,
+                            "name" to product.name,
+                            "category" to product.category,
+                            "measure" to product.measure,
+                            "size" to product.size
+                        )
+                    },
                     "quantity" to data.quantity,
                     "price" to data.price
                 )

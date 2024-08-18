@@ -13,19 +13,6 @@ class SellerController(
     private val sellerService: SellerServiceImpl
 ) {
 
-    @GetMapping
-    fun getSellers(): ResponseEntity<ControllerResponse> {
-        val response = sellerService.getSellers()
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(status, mapOf("sellers" to data!!.map {
-                mapOf(
-                    "sellerId" to it.sellerId,
-                    "name" to it.name
-                )
-            })) else responseEntity(status)
-        }
-    }
-
     @GetMapping("/{sellerId}")
     fun getSeller(
         @PathVariable sellerId: Int

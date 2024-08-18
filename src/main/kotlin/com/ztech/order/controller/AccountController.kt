@@ -1,10 +1,10 @@
 package com.ztech.order.controller
 
+import com.ztech.order.core.ControllerResponse
 import com.ztech.order.core.Status
+import com.ztech.order.core.responseEntity
 import com.ztech.order.model.dto.AccountCreateRequest
 import com.ztech.order.model.dto.AccountUpdateRequest
-import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.responseEntity
 import com.ztech.order.service.AccountServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,7 +21,12 @@ class AccountController(
         val response = accountService.createAccount(username, password, email, mobile)
         with(response) {
             return if (status == Status.SUCCESS) responseEntity(
-                status
+                status, mapOf(
+                    "accountId" to data!!.accountId,
+                    "username" to data.username,
+                    "email" to data.email,
+                    "mobile" to data.mobile
+                )
             ) else responseEntity(status)
         }
     }
