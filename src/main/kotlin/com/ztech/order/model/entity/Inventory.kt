@@ -4,7 +4,13 @@ import jakarta.persistence.*
 import java.math.BigDecimal
 
 @Entity
-@Table(name = "seller_inventory")
+@NamedEntityGraph(
+    name = "Inventory.product",
+    attributeNodes = [NamedAttributeNode("product")]
+)
+@Table(
+    name = "inventory", uniqueConstraints = [UniqueConstraint(columnNames = ["product_id", "seller_id"])]
+)
 data class Inventory(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +31,5 @@ data class Inventory(
 
     @Column(name = "quantity", nullable = false)
     var quantity: Int = 0
+
 }

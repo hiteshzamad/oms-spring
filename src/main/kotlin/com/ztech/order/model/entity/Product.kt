@@ -5,12 +5,13 @@ import jakarta.persistence.*
 import java.math.BigDecimal
 
 @Entity
-@Table(name = "product")
+@Table(
+    name = "product", uniqueConstraints = [UniqueConstraint(columnNames = ["name", "measure", "size"])]
+)
 data class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    val productId: Int? = null
+    @Column(name = "product_id") val productId: Int? = null
 ) {
 
     @Column(name = "name", nullable = false, length = 64)

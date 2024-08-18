@@ -5,7 +5,10 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "order_status")
+@Table(
+    name = "order_status", uniqueConstraints = [UniqueConstraint(columnNames = ["order_id", "status"])]
+
+)
 data class OrderStatus(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

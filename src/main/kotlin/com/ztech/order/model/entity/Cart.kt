@@ -3,7 +3,13 @@ package com.ztech.order.model.entity
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "cart")
+@NamedEntityGraph(
+    name = "Cart.inventory",
+    attributeNodes = [NamedAttributeNode("inventory")]
+)
+@Table(
+    name = "cart", uniqueConstraints = [UniqueConstraint(columnNames = ["inventory_id", "customer_id"])]
+)
 data class Cart(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,12 +4,11 @@ import jakarta.persistence.*
 import java.math.BigDecimal
 
 @Entity
-@Table(name = "order_item")
+@Table(
+    name = "order_item", uniqueConstraints = [UniqueConstraint(columnNames = ["order_id", "product_id", "seller_id"])]
+)
 data class OrderItem(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_item_id")
-    val orderItemId: Int? = null
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "order_item_id") val orderItemId: Int? = null
 ) {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
