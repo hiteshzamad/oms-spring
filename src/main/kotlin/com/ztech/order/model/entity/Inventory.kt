@@ -12,11 +12,11 @@ data class Inventory(
     val inventoryId: Int? = null
 ) {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     lateinit var product: Product
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     lateinit var seller: Seller
 

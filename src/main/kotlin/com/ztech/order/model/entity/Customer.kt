@@ -10,7 +10,7 @@ data class Customer(
     @Column(name = "customer_id")
     val customerId: Int? = null
 ) {
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false, unique = true)
     lateinit var account: Account
 

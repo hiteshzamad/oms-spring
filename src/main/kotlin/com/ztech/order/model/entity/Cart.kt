@@ -10,11 +10,11 @@ data class Cart(
     @Column(name = "cart_id")
     val cartId: Int? = null
 ) {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     lateinit var customer: Customer
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inventory_id", nullable = false)
     lateinit var inventory: Inventory
 

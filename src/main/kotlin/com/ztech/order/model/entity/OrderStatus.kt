@@ -15,7 +15,7 @@ data class OrderStatus(
     val date: LocalDateTime = LocalDateTime.now()
 ) {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     lateinit var order: Order
 

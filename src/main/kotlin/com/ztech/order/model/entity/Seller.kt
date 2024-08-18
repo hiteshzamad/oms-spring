@@ -11,7 +11,7 @@ data class Seller(
     val sellerId: Int? = null
 ) {
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false, unique = true)
     lateinit var account: Account
 

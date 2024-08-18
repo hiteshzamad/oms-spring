@@ -11,7 +11,7 @@ data class Order(
     val orderId: Int? = null
 ) {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     lateinit var customer: Customer
 }

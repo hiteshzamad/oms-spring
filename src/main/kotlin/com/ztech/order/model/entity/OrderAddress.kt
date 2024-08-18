@@ -10,7 +10,7 @@ data class OrderAddress(
     @Column(name = "order_address_id")
     val orderAddressId: Int? = null
 ) {
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false, unique = true)
     lateinit var order: Order
 

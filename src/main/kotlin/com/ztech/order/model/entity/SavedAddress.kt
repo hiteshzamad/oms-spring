@@ -10,7 +10,7 @@ data class SavedAddress(
     @Column(name = "saved_address_id")
     val savedAddressId: Int? = null
 ) {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     lateinit var customer: Customer
 
