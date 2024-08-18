@@ -1,3 +1,11 @@
 package com.ztech.order.core
 
-data class ControllerResponse(val data: Map<String, Any?>)
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.Include
+
+data class ControllerResponse(
+    @JsonInclude(Include.NON_NULL)
+    val data: Map<String, Any?>?,
+    @JsonInclude(Include.NON_NULL)
+    val message: String?
+)
