@@ -23,7 +23,7 @@ class InventoryServiceImpl(
             inventory.quantity = quantity
             inventory.price = price.toBigDecimal()
         })
-        ServiceResponse(Status.SUCCESS, inventory.toDomain(false))
+        ServiceResponse(Status.SUCCESS, inventory.toDomain(false, false))
     }
 
     fun getInventoriesByProductName(name: String, page: Int, pageSize: Int) = tryCatchDaoCall {
@@ -34,7 +34,8 @@ class InventoryServiceImpl(
 
     fun getInventoriesBySellerId(sellerId: Int, page: Int, pageSize: Int) = tryCatchDaoCall {
         val inventories =
-            inventoryRepository.findBySellerSellerId(sellerId, PageRequest.of(page, pageSize)).map { it.toDomain() }
+            inventoryRepository.findBySellerSellerId(sellerId, PageRequest.of(page, pageSize))
+                .map { it.toDomain(seller = false) }
         ServiceResponse(Status.SUCCESS, inventories)
     }
 
@@ -45,7 +46,7 @@ class InventoryServiceImpl(
 
     fun getInventoryBySellerIdAndInventoryId(sellerId: Int, inventoryId: Int) = tryCatchDaoCall {
         val inventory = inventoryRepository.findBySellerSellerIdAndInventoryId(sellerId, inventoryId)
-        ServiceResponse(Status.SUCCESS, inventory.toDomain())
+        ServiceResponse(Status.SUCCESS, inventory.toDomain(seller = false))
     }
 
     fun updateInventory(sellerId: Int, inventoryId: Int, quantity: Int, price: Double) = tryCatchDaoCall {
@@ -53,12 +54,12 @@ class InventoryServiceImpl(
         when (responseGetInventory.status) {
             Status.SUCCESS -> responseGetInventory.data!!.let { inventory ->
                 val newEntity = InventoryEntity(inventory.inventoryId)
-                newEntity.seller = SellerEntity(inventory.sellerId)
+                newEntity.seller = SellerEntity(inventory.seller!!.sellerId)
                 newEntity.product = ProductEntity(inventory.product!!.productId)
                 newEntity.quantity = quantity
                 newEntity.price = price.toBigDecimal()
                 val updatedEntity = inventoryRepository.save(newEntity)
-                ServiceResponse(Status.SUCCESS, updatedEntity.toDomain())
+                ServiceResponse(Status.SUCCESS, updatedEntity.toDomain(seller = false))
             }
             else -> responseGetInventory
         }

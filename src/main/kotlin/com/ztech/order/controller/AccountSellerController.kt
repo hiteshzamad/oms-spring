@@ -1,8 +1,8 @@
 package com.ztech.order.controller
 
 import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.Status
 import com.ztech.order.core.responseEntity
+import com.ztech.order.model.domain.Seller
 import com.ztech.order.model.dto.SellerCreateRequest
 import com.ztech.order.service.SellerServiceImpl
 import org.springframework.http.ResponseEntity
@@ -21,14 +21,7 @@ class AccountSellerController(
     ): ResponseEntity<ControllerResponse> {
         val (name) = seller
         val response = sellerService.createSeller(accountId, name)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "sellerId" to data!!.sellerId,
-                    "name" to data.name
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @GetMapping
@@ -36,14 +29,7 @@ class AccountSellerController(
         @PathVariable accountId: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = sellerService.getSellerByAccountId(accountId)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "sellerId" to data!!.sellerId,
-                    "name" to data.name
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @GetMapping("/{sellerId}")
@@ -51,14 +37,7 @@ class AccountSellerController(
         @PathVariable sellerId: Int
     ): ResponseEntity<ControllerResponse> {
         val response = sellerService.getSellerBySellerId(sellerId)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "sellerId" to data!!.sellerId,
-                    "name" to data.name
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
 }

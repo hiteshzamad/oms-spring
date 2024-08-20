@@ -1,7 +1,6 @@
 package com.ztech.order.controller
 
 import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.Status
 import com.ztech.order.core.responseEntity
 import com.ztech.order.model.dto.InventoryCreateRequest
 import com.ztech.order.model.dto.InventoryUpdateRequest
@@ -22,53 +21,21 @@ class SellerInventoryController(
     ): ResponseEntity<ControllerResponse> {
         val (productId, price, quantity) = inventory
         val response = inventoryService.createInventory(sellerId, productId, quantity, price)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "inventoryId" to data!!.inventoryId,
-                    "sellerId" to data.sellerId,
-                    "product" to data.product?.let { product ->
-                        mapOf(
-                            "productId" to product.productId,
-                            "name" to product.name,
-                            "category" to product.category,
-                            "measure" to product.measure,
-                            "size" to product.size
-                        )
-                    },
-                    "quantity" to data.quantity,
-                    "price" to data.price
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @GetMapping
     fun getInventories(
         @PathVariable sellerId: Int,
-        @RequestParam(defaultValue = "10") pageSize: Int,
         @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") pageSize: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = inventoryService.getInventoriesBySellerId(sellerId, page, pageSize)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(status, mapOf("inventories" to data!!.map {
-                mapOf(
-                    "inventoryId" to it.inventoryId,
-                    "sellerId" to it.sellerId,
-                    "product" to it.product?.let { product ->
-                        mapOf(
-                            "productId" to product.productId,
-                            "name" to product.name,
-                            "category" to product.category,
-                            "measure" to product.measure,
-                            "size" to product.size
-                        )
-                    },
-                    "quantity" to it.quantity,
-                    "price" to it.price
-                )
-            })) else responseEntity(status)
-        }
+        return responseEntity(
+            response.status,
+            mapOf("inventories" to response.data?.map { it.toMap() }),
+            response.message
+        )
     }
 
     @GetMapping("/{inventoryId}")
@@ -77,25 +44,7 @@ class SellerInventoryController(
         @PathVariable inventoryId: Int
     ): ResponseEntity<ControllerResponse> {
         val response = inventoryService.getInventoryBySellerIdAndInventoryId(sellerId, inventoryId)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "inventoryId" to data!!.inventoryId,
-                    "sellerId" to data.sellerId,
-                    "product" to data.product?.let { product ->
-                        mapOf(
-                            "productId" to product.productId,
-                            "name" to product.name,
-                            "category" to product.category,
-                            "measure" to product.measure,
-                            "size" to product.size
-                        )
-                    },
-                    "quantity" to data.quantity,
-                    "price" to data.price
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @PutMapping("/{inventoryId}")
@@ -106,25 +55,7 @@ class SellerInventoryController(
     ): ResponseEntity<ControllerResponse> {
         val (price, quantity) = inventory
         val response = inventoryService.updateInventory(sellerId, inventoryId, quantity, price)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "inventoryId" to data!!.inventoryId,
-                    "sellerId" to data.sellerId,
-                    "product" to data.product?.let { product ->
-                        mapOf(
-                            "productId" to product.productId,
-                            "name" to product.name,
-                            "category" to product.category,
-                            "measure" to product.measure,
-                            "size" to product.size
-                        )
-                    },
-                    "quantity" to data.quantity,
-                    "price" to data.price
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @DeleteMapping("/{inventoryId}")
@@ -133,8 +64,7 @@ class SellerInventoryController(
         @PathVariable inventoryId: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = inventoryService.deleteInventory(sellerId, inventoryId)
-        with(response) {
-            return responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
+
 }

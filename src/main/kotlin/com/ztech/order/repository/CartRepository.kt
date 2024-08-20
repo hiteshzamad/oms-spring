@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CartRepository : JpaRepository<Cart, Int> {
-    @EntityGraph("Cart.inventory.product")
-    fun findByCustomerCustomerId(customerId: Int, pageRequest: PageRequest): List<Cart>
-    @EntityGraph("Cart.inventory.product")
+    @EntityGraph("Cart.inventory.product_seller")
+    fun findByCustomerCustomerId(customerId: Int): List<Cart>
+    @EntityGraph("Cart.inventory.product_seller")
     fun findByCustomerCustomerIdAndCartId(customerId: Int, cartId: Int): Cart
     fun deleteByCustomerCustomerIdAndCartId(customerId: Int, cartId: Int)
 }

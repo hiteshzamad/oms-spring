@@ -8,13 +8,13 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface InventoryRepository : JpaRepository<Inventory, Int> {
-    @EntityGraph("Inventory.product")
+    @EntityGraph("Inventory.product_seller")
     fun findByInventoryId(inventoryId: Int): Inventory
 
     @EntityGraph("Inventory.product")
     fun findBySellerSellerId(sellerId: Int, pageRequest: PageRequest): List<Inventory>
 
-    @EntityGraph("Inventory.product")
+    @EntityGraph("Inventory.product_seller")
     fun findByProductNameContainingIgnoreCase(name: String, pageRequest: PageRequest): List<Inventory>
 
     @EntityGraph("Inventory.product")

@@ -1,8 +1,8 @@
 package com.ztech.order.controller
 
 import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.Status
 import com.ztech.order.core.responseEntity
+import com.ztech.order.model.domain.Account
 import com.ztech.order.model.dto.AccountCreateRequest
 import com.ztech.order.model.dto.AccountUpdateRequest
 import com.ztech.order.service.AccountServiceImpl
@@ -19,31 +19,13 @@ class AccountController(
     fun createAccount(@RequestBody account: AccountCreateRequest): ResponseEntity<ControllerResponse> {
         val (username, password, email, mobile) = account
         val response = accountService.createAccount(username, password, email, mobile)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "accountId" to data!!.accountId,
-                    "username" to data.username,
-                    "email" to data.email,
-                    "mobile" to data.mobile
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @GetMapping("/{accountId}")
     fun getAccount(@PathVariable accountId: Int): ResponseEntity<ControllerResponse> {
         val response = accountService.getAccountByAccountId(accountId)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "accountId" to data!!.accountId,
-                    "username" to data.username,
-                    "email" to data.email,
-                    "mobile" to data.mobile
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @PutMapping("/{accountId}")
@@ -52,15 +34,6 @@ class AccountController(
     ): ResponseEntity<ControllerResponse> {
         val (email, mobile, password) = account
         val response = accountService.updateAccount(accountId, email, mobile, password)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "accountId" to data!!.accountId,
-                    "username" to data.username,
-                    "email" to data.email,
-                    "mobile" to data.mobile
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 }

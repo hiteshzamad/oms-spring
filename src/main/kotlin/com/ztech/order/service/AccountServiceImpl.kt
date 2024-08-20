@@ -5,7 +5,6 @@ import com.ztech.order.core.ServiceResponse
 import com.ztech.order.core.Status
 import com.ztech.order.repository.AccountRepository
 import org.springframework.stereotype.Service
-import com.ztech.order.model.domain.Account as AccountDomain
 import com.ztech.order.model.entity.Account as AccountEntity
 
 @Service
@@ -15,20 +14,13 @@ class AccountServiceImpl(
     fun createAccount(
         username: String, password: String, email: String?, mobile: String?
     ) = tryCatchDaoCall {
-        val responseGetAccount = getAccountByUsername(username)
-        when (responseGetAccount.status) {
-            Status.SUCCESS -> ServiceResponse(Status.CONFLICT)
-            Status.NOT_FOUND -> {
-                val savedEntity = accountRepository.save(AccountEntity().also {
-                    it.username = username
-                    it.password = password
-                    it.email = email
-                    it.mobile = mobile
-                })
-                ServiceResponse(Status.SUCCESS, savedEntity.toDomain())
-            }
-            else -> responseGetAccount
-        }
+        val savedEntity = accountRepository.save(AccountEntity().also {
+            it.username = username
+            it.password = password
+            it.email = email
+            it.mobile = mobile
+        })
+        ServiceResponse(Status.SUCCESS, savedEntity.toDomain())
     }
 
     fun getAccountByAccountId(accountId: Int) = tryCatchDaoCall {

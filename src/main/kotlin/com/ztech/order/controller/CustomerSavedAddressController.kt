@@ -1,7 +1,6 @@
 package com.ztech.order.controller
 
 import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.Status
 import com.ztech.order.core.responseEntity
 import com.ztech.order.model.dto.SavedAddressCreateRequest
 import com.ztech.order.model.dto.SavedAddressUpdateRequest
@@ -17,79 +16,33 @@ class CustomerSavedAddressController(
 
     @PostMapping
     fun createSavedAddress(
-        @PathVariable customerId: Int, @RequestBody savedAddress: SavedAddressCreateRequest
+        @PathVariable customerId: Int,
+        @RequestBody savedAddress: SavedAddressCreateRequest
     ): ResponseEntity<ControllerResponse> {
         val (name, mobile, address1, address2, address3, city, state, country, pincode) = savedAddress
         val response = savedAddressService.createSavedAddress(
             customerId, name, mobile, address1, address2, address3, city, state, country, pincode
         )
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "addressId" to data!!.addressId,
-                    "customerId" to data.customerId,
-                    "name" to data.name,
-                    "mobile" to data.mobile,
-                    "address1" to data.address1,
-                    "address2" to data.address2,
-                    "address3" to data.address3,
-                    "city" to data.city,
-                    "state" to data.state,
-                    "country" to data.country,
-                    "pincode" to data.pincode
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @GetMapping
     fun getSavedAddresses(
         @PathVariable customerId: Int,
-        @RequestParam(defaultValue = "10") pageSize: Int,
         @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") pageSize: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = savedAddressService.getSavedAddressesByCustomerId(customerId, page, pageSize)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(status, mapOf("savedAddresses" to data!!.map {
-                mapOf(
-                    "addressId" to it.addressId,
-                    "customerId" to it.customerId,
-                    "name" to it.name,
-                    "mobile" to it.mobile,
-                    "address1" to it.address1,
-                    "address2" to it.address2,
-                    "address3" to it.address3,
-                    "city" to it.city,
-                    "state" to it.state,
-                    "country" to it.country,
-                    "pincode" to it.pincode
-                )
-            })) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @GetMapping("/{savedAddressId}")
     fun getSavedAddress(
-        @PathVariable customerId: Int, @PathVariable savedAddressId: Int
+        @PathVariable customerId: Int,
+        @PathVariable savedAddressId: Int
     ): ResponseEntity<ControllerResponse> {
         val response = savedAddressService.getSavedAddressByCustomerIdAndSavedAddressId(customerId, savedAddressId)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "addressId" to data!!.addressId,
-                    "customerId" to data.customerId,
-                    "name" to data.name,
-                    "mobile" to data.mobile,
-                    "address1" to data.address1,
-                    "address2" to data.address2,
-                    "address3" to data.address3,
-                    "city" to data.city,
-                    "state" to data.state,
-                    "country" to data.country,
-                    "pincode" to data.pincode
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @PutMapping("/{savedAddressId}")
@@ -102,23 +55,7 @@ class CustomerSavedAddressController(
         val response = savedAddressService.updateSavedAddress(
             customerId, savedAddressId, name, mobile, address1, address2, address3, city, state, country, pincode
         )
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "addressId" to data!!.addressId,
-                    "customerId" to data.customerId,
-                    "name" to data.name,
-                    "mobile" to data.mobile,
-                    "address1" to data.address1,
-                    "address2" to data.address2,
-                    "address3" to data.address3,
-                    "city" to data.city,
-                    "state" to data.state,
-                    "country" to data.country,
-                    "pincode" to data.pincode
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @DeleteMapping("/{savedAddressId}")
@@ -127,8 +64,7 @@ class CustomerSavedAddressController(
         @PathVariable savedAddressId: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = savedAddressService.deleteSavedAddress(customerId, savedAddressId)
-        with(response) {
-            return responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
+
 }

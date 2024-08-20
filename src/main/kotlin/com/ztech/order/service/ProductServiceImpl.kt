@@ -19,7 +19,7 @@ class ProductServiceImpl(
         val savedEntity = productRepository.save(ProductEntity().also {
             it.name = name
             it.category = category
-            it.measure = Measure.valueOf(measure.lowercase())
+            it.measure = Measure.valueOf(measure.uppercase())
             it.size = size.toBigDecimal()
         })
         ServiceResponse(Status.SUCCESS, savedEntity.toDomain())

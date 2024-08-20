@@ -1,7 +1,6 @@
 package com.ztech.order.controller
 
 import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.Status
 import com.ztech.order.core.responseEntity
 import com.ztech.order.service.InventoryServiceImpl
 import org.springframework.http.ResponseEntity
@@ -16,29 +15,11 @@ class InventoryController(
     @GetMapping
     fun getInventories(
         @RequestParam(defaultValue = "") name: String,
-        @RequestParam(defaultValue = "10") pageSize: Int,
         @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") pageSize: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = inventoryService.getInventoriesByProductName(name, page, pageSize)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(status, mapOf("inventories" to data!!.map {
-                mapOf(
-                    "inventoryId" to it.inventoryId,
-                    "sellerId" to it.sellerId,
-                    "product" to it.product?.let { product ->
-                        mapOf(
-                            "productId" to product.productId,
-                            "name" to product.name,
-                            "category" to product.category,
-                            "measure" to product.measure,
-                            "size" to product.size
-                        )
-                    },
-                    "quantity" to it.quantity,
-                    "price" to it.price
-                )
-            })) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 
     @GetMapping("/{inventoryId}")
@@ -46,24 +27,7 @@ class InventoryController(
         @PathVariable inventoryId: Int
     ): ResponseEntity<ControllerResponse> {
         val response = inventoryService.getInventoryByInventoryId(inventoryId)
-        with(response) {
-            return if (status == Status.SUCCESS) responseEntity(
-                status, mapOf(
-                    "inventoryId" to data!!.inventoryId,
-                    "sellerId" to data.sellerId,
-                    "product" to data.product?.let { product ->
-                        mapOf(
-                            "productId" to product.productId,
-                            "name" to product.name,
-                            "category" to product.category,
-                            "measure" to product.measure,
-                            "size" to product.size
-                        )
-                    },
-                    "quantity" to data.quantity,
-                    "price" to data.price
-                )
-            ) else responseEntity(status)
-        }
+        return responseEntity(response.status, response.data?.toMap(), response.message)
     }
+
 }

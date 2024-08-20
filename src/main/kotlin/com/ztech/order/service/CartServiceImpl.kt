@@ -4,7 +4,6 @@ import com.ztech.order.core.AbstractService
 import com.ztech.order.core.ServiceResponse
 import com.ztech.order.core.Status
 import com.ztech.order.repository.CartRepository
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import com.ztech.order.model.domain.Cart as CartDomain
@@ -26,9 +25,9 @@ class CartServiceImpl(
         )
     }
 
-    fun getCartsByCustomerId(customerId: Int, page: Int, pageSize: Int) = tryCatchDaoCall {
+    fun getCartsByCustomerId(customerId: Int) = tryCatchDaoCall {
         ServiceResponse(Status.SUCCESS,
-            cartRepository.findByCustomerCustomerId(customerId, PageRequest.of(page, pageSize)).map { it.toDomain() })
+            cartRepository.findByCustomerCustomerId(customerId).map { it.toDomain() })
     }
 
     fun getCartByCustomerIdAndCartId(customerId: Int, cartId: Int) = tryCatchDaoCall {

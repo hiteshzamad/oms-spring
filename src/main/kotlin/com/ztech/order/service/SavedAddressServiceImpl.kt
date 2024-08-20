@@ -70,7 +70,7 @@ class SavedAddressServiceImpl(
         when (responseGetAddress.status) {
             Status.SUCCESS -> responseGetAddress.data!!.let { address ->
                 val newEntity = SavedAddressEntity(address.addressId)
-                newEntity.customer = CustomerEntity(address.customerId)
+                newEntity.customer = CustomerEntity(customerId)
                 newEntity.name = name
                 newEntity.mobile = mobile
                 newEntity.address1 = address1
