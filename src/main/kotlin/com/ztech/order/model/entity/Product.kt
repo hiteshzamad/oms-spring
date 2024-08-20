@@ -6,7 +6,9 @@ import java.math.BigDecimal
 
 @Entity
 @Table(
-    name = "product", uniqueConstraints = [UniqueConstraint(columnNames = ["name", "measure", "size"])]
+    name = "product", uniqueConstraints = [
+        UniqueConstraint(name = "unicst_name_measure_size", columnNames = ["name", "measure", "size"])
+    ]
 )
 data class Product(
     @Id

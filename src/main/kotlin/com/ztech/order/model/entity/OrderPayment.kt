@@ -1,12 +1,18 @@
 package com.ztech.order.model.entity
 
 import com.ztech.order.model.common.PaymentMethod
+import com.ztech.order.model.common.PaymentStatus
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "order_payment")
+@Table(
+    name = "order_payment",
+    uniqueConstraints = [
+        UniqueConstraint(name = "unicst_order_id", columnNames = ["order_id"])
+    ]
+)
 data class OrderPayment(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +36,10 @@ data class OrderPayment(
 
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     lateinit var amount: BigDecimal
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    lateinit var status: PaymentStatus
 
 }
 

@@ -3,7 +3,12 @@ package com.ztech.order.model.entity
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "order_address")
+@Table(
+    name = "order_address",
+    uniqueConstraints = [
+        UniqueConstraint(name = "unicst_order_id", columnNames = ["order_id"])
+    ]
+)
 data class OrderAddress(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -11,7 +16,7 @@ data class OrderAddress(
     val orderAddressId: Int? = null
 ) {
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false, unique = true)
+    @JoinColumn(name = "order_id", nullable = false)
     lateinit var order: Order
 
     @Column(name = "name", nullable = false, length = 64)

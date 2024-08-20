@@ -5,5 +5,5 @@ data class Product(
     val name: String,
     val category: String,
     val measure: String,
-    val size: Double
+    val size: Double,
 )

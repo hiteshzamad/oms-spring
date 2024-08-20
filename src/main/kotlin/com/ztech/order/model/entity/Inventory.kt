@@ -8,8 +8,14 @@ import java.math.BigDecimal
     name = "Inventory.product",
     attributeNodes = [NamedAttributeNode("product")]
 )
+@NamedEntityGraph(
+    name = "Inventory.product_seller",
+    attributeNodes = [NamedAttributeNode("product"),NamedAttributeNode("seller")]
+)
 @Table(
-    name = "inventory", uniqueConstraints = [UniqueConstraint(columnNames = ["product_id", "seller_id"])]
+    name = "inventory", uniqueConstraints = [
+        UniqueConstraint(name = "unicst_product_seller", columnNames = ["product_id", "seller_id"])
+    ]
 )
 data class Inventory(
     @Id

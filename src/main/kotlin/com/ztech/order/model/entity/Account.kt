@@ -4,7 +4,13 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "account")
+@Table(
+    name = "account", uniqueConstraints = [
+        UniqueConstraint(name = "unicst_username", columnNames = ["username"]),
+        UniqueConstraint(name = "unicst_mobile", columnNames = ["mobile"]),
+        UniqueConstraint(name = "unicst_email", columnNames = ["email"])
+    ]
+)
 data class Account(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,16 +19,16 @@ data class Account(
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
-    @Column(name = "username", nullable = false, unique = true, length = 32)
+    @Column(name = "username", nullable = false, length = 32)
     lateinit var username: String
 
     @Column(name = "password", nullable = false, length = 255)
     lateinit var password: String
 
-    @Column(name = "email", unique = true, length = 64)
+    @Column(name = "email", length = 64)
     var email: String? = null
 
-    @Column(name = "mobile", unique = true, length = 15)
+    @Column(name = "mobile", length = 15)
     var mobile: String? = null
 
 }

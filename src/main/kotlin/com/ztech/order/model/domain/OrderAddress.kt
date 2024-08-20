@@ -1,6 +1,6 @@
 package com.ztech.order.model.domain
 
-data class SavedAddress(
+data class OrderAddress(
     val addressId: Int,
     val name: String,
     val mobile: String,
@@ -10,5 +10,5 @@ data class SavedAddress(
     val city: String,
     val state: String,
     val country: String,
-    val pincode: String,
+    val pincode: String
 )
