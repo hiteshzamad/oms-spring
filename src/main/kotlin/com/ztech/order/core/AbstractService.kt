@@ -10,8 +10,18 @@ abstract class AbstractService {
         } catch (e: EmptyResultDataAccessException) {
             ServiceResponse(Status.NOT_FOUND)
         } catch (e: DataIntegrityViolationException) {
-            ServiceResponse(Status.INVALID_INPUT)
+            when {
+                e.message!!.contains("DUPLICATE", ignoreCase = true)
+                        || e.message!!.contains("UNIQUE", ignoreCase = true) ->
+                    ServiceResponse(
+                        Status.CONFLICT,
+                        message = e.message?.split("unicst_")?.get(1)
+                            ?.substringBefore("'")?.run { "Duplicate $this" }
+                    )
+                else -> ServiceResponse(Status.INVALID_INPUT)
+            }
         } catch (e: Exception) {
+            println(e.javaClass.name + ' ' + e.message)
             ServiceResponse(Status.ERROR)
         }
     }

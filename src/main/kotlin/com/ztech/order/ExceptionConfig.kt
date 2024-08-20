@@ -16,7 +16,7 @@ class ExceptionConfig : ResponseEntityExceptionHandler() {
         ex: Exception, body: Any?, headers: HttpHeaders, statusCode: HttpStatusCode, request: WebRequest
     ): ResponseEntity<Any>? {
         return super.handleExceptionInternal(
-            ex, responseBody(null, statusCode as HttpStatus), headers, statusCode, request
+            ex, responseBody(null, statusCode as HttpStatus, null), headers, statusCode, request
         )
     }
 }
