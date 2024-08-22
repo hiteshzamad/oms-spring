@@ -10,9 +10,9 @@ import com.ztech.order.model.entity.Customer as CustomerEntity
 
 @Service
 class CustomerServiceImpl(
-    private val customerRepository: CustomerRepository
+    private val customerRepository: CustomerRepository,
 ) : AbstractService() {
-    fun createCustomer(accountId: Int, name: String) = tryCatchDaoCall {
+    fun createCustomer(accountId: Int, name: String) = tryCatch {
         val savedEntity = customerRepository.save(CustomerEntity().also {
             it.account = AccountEntity(accountId)
             it.name = name
@@ -20,14 +20,14 @@ class CustomerServiceImpl(
         ServiceResponse(Status.SUCCESS, savedEntity.toDomain())
     }
 
-    fun getCustomerByAccountId(accountId: Int) = tryCatchDaoCall {
-        val customer = customerRepository.findByAccountAccountId((accountId))
-        ServiceResponse(Status.SUCCESS, customer.toDomain())
+    fun getCustomerByAccountId(accountId: Int) = tryCatch {
+        val entity = customerRepository.findByAccountAccountId((accountId))
+        ServiceResponse(Status.SUCCESS, entity.toDomain())
     }
 
-    fun getCustomerByCustomerId(customerId: Int) = tryCatchDaoCall {
-        val customer = customerRepository.findByCustomerId(customerId).toDomain()
-        ServiceResponse(Status.SUCCESS, customer)
+    fun getCustomerByCustomerId(customerId: Int) = tryCatch {
+        val entity = customerRepository.findByCustomerId(customerId)
+        ServiceResponse(Status.SUCCESS, entity.toDomain())
     }
 
 }

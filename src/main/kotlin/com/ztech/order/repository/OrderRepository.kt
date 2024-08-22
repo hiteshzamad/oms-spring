@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface OrderRepository : JpaRepository<Order, Int>{
     fun findByOrderId(orderId: Int): Order
-    fun findByCustomerCustomerId(customerId: Int): Order
+    fun findByCustomerCustomerId(customerId: Int): List<Order>
     fun findByCustomerCustomerIdAndOrderId(customerId: Int, orderId: Int): Order
     fun deleteByCustomerCustomerIdAndOrderId(customerId: Int, orderId: Int)
 }

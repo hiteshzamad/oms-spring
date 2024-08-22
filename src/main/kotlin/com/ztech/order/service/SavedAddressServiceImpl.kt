@@ -3,17 +3,19 @@ package com.ztech.order.service
 import com.ztech.order.core.AbstractService
 import com.ztech.order.core.ServiceResponse
 import com.ztech.order.core.Status
+import com.ztech.order.core.TransactionHandler
 import com.ztech.order.repository.SavedAddressRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import kotlin.jvm.optionals.getOrElse
 import com.ztech.order.model.domain.SavedAddress as SavedAddressDomain
 import com.ztech.order.model.entity.Customer as CustomerEntity
 import com.ztech.order.model.entity.SavedAddress as SavedAddressEntity
 
 @Service
 class SavedAddressServiceImpl(
-    private val savedAddressRepository: SavedAddressRepository
+    private val savedAddressRepository: SavedAddressRepository,
+    private val transactionHandler: TransactionHandler
 ) : AbstractService() {
     fun createSavedAddress(
         customerId: Int,
@@ -26,8 +28,8 @@ class SavedAddressServiceImpl(
         state: String,
         country: String,
         pincode: String,
-    ) = tryCatchDaoCall {
-        val address = savedAddressRepository.save(SavedAddressEntity().also { newEntity ->
+    ) = tryCatch {
+        val entity = savedAddressRepository.save(SavedAddressEntity().also { newEntity ->
             newEntity.customer = CustomerEntity(customerId)
             newEntity.name = name
             newEntity.mobile = mobile
@@ -39,18 +41,17 @@ class SavedAddressServiceImpl(
             newEntity.country = country
             newEntity.pincode = pincode
         })
-        ServiceResponse(Status.SUCCESS, address.toDomain())
+        ServiceResponse(Status.SUCCESS, entity.toDomain())
     }
 
-    fun getSavedAddressesByCustomerId(customerId: Int, page: Int, pageSize: Int) = tryCatchDaoCall {
-        val addresses = savedAddressRepository.findByCustomerCustomerId(customerId, PageRequest.of(page, pageSize))
-            .map { it.toDomain() }
-        ServiceResponse(Status.SUCCESS, addresses)
+    fun getSavedAddressesByCustomerId(customerId: Int, page: Int, pageSize: Int) = tryCatch {
+        val entities = savedAddressRepository.findByCustomerCustomerId(customerId, PageRequest.of(page, pageSize))
+        ServiceResponse(Status.SUCCESS, entities.map { it.toDomain() })
     }
 
-    fun getSavedAddressByCustomerIdAndSavedAddressId(customerId: Int, savedAddressId: Int) = tryCatchDaoCall {
-        val address = savedAddressRepository.findByCustomerCustomerIdAndSavedAddressId(customerId, savedAddressId)
-        ServiceResponse(Status.SUCCESS, address.toDomain())
+    fun getSavedAddressByCustomerIdAndSavedAddressId(customerId: Int, savedAddressId: Int) = tryCatch {
+        val entity = savedAddressRepository.findByCustomerCustomerIdAndSavedAddressId(customerId, savedAddressId)
+        ServiceResponse(Status.SUCCESS, entity.toDomain())
     }
 
     fun updateSavedAddress(
@@ -65,32 +66,32 @@ class SavedAddressServiceImpl(
         state: String,
         country: String,
         pincode: String,
-    ) = tryCatchDaoCall {
-        val responseGetAddress = getSavedAddressByCustomerIdAndSavedAddressId(customerId, savedAddressId)
-        when (responseGetAddress.status) {
-            Status.SUCCESS -> responseGetAddress.data!!.let { address ->
-                val newEntity = SavedAddressEntity(address.addressId)
-                newEntity.customer = CustomerEntity(customerId)
-                newEntity.name = name
-                newEntity.mobile = mobile
-                newEntity.address1 = address1
-                newEntity.address2 = address2
-                newEntity.address3 = address3
-                newEntity.city = city
-                newEntity.state = state
-                newEntity.country = country
-                newEntity.pincode = pincode
-                val updatedEntity = savedAddressRepository.save(newEntity)
-                ServiceResponse(Status.SUCCESS, updatedEntity.toDomain())
+    ) = tryCatch {
+        this.transactionHandler.execute {
+            val address = savedAddressRepository.findById(savedAddressId).getOrElse {
+                return@execute ServiceResponse(Status.NOT_FOUND, null, "Cart not found")
             }
-            else -> responseGetAddress
+            val newEntity = SavedAddressEntity(address.savedAddressId)
+            newEntity.customer = CustomerEntity(customerId)
+            newEntity.name = name
+            newEntity.mobile = mobile
+            newEntity.address1 = address1
+            newEntity.address2 = address2
+            newEntity.address3 = address3
+            newEntity.city = city
+            newEntity.state = state
+            newEntity.country = country
+            newEntity.pincode = pincode
+            val updatedEntity = savedAddressRepository.save(newEntity)
+            ServiceResponse(Status.SUCCESS, updatedEntity.toDomain())
         }
     }
 
-    @Transactional
-    fun deleteSavedAddress(customerId: Int, savedAddressId: Int) = tryCatchDaoCall {
-        savedAddressRepository.deleteByCustomerCustomerIdAndSavedAddressId(customerId, savedAddressId)
-        ServiceResponse<SavedAddressDomain>(Status.SUCCESS)
+    fun deleteSavedAddress(customerId: Int, savedAddressId: Int) = tryCatch {
+        this.transactionHandler.execute {
+            savedAddressRepository.deleteByCustomerCustomerIdAndSavedAddressId(customerId, savedAddressId)
+            ServiceResponse<SavedAddressDomain>(Status.SUCCESS)
+        }
     }
 
 }

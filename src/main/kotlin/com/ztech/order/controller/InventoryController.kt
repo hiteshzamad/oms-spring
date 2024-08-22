@@ -19,7 +19,7 @@ class InventoryController(
         @RequestParam(defaultValue = "10") pageSize: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = inventoryService.getInventoriesByProductName(name, page, pageSize)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseEntity(response.status, mapOf("inventories" to response.data?.map { it.toMap() }), response.message)
     }
 
     @GetMapping("/{inventoryId}")

@@ -6,6 +6,6 @@ data class CartCreateRequest(
 )
 
 data class CartUpdateRequest(
-    val quantity: Int
+    val quantityChange: Int
 )
 

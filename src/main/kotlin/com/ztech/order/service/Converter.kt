@@ -46,14 +46,14 @@ fun Inventory.toDomain(product: Boolean = true, seller: Boolean = true) = com.zt
     inventoryId = inventoryId!!,
     quantity = quantity,
     price = price.toDouble(),
-    product = if(product) this.product.toDomain() else null,
-    seller = if(seller) this.seller.toDomain() else null,
+    product = if (product) this.product.toDomain() else null,
+    seller = if (seller) this.seller.toDomain() else null,
 )
 
 fun Cart.toDomain(inventory: Boolean = true) = com.ztech.order.model.domain.Cart(
     cartId = cartId!!,
-    inventory = if(inventory) this.inventory.toDomain() else null,
     quantity = quantity,
+    inventory = if (inventory) this.inventory.toDomain() else null,
 )
 
 fun OrderItem.toDomain() = com.ztech.order.model.domain.OrderItem(

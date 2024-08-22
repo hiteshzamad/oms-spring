@@ -33,7 +33,7 @@ class CustomerSavedAddressController(
         @RequestParam(defaultValue = "10") pageSize: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = savedAddressService.getSavedAddressesByCustomerId(customerId, page, pageSize)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseEntity(response.status, mapOf("savedAddresses" to response.data?.map { it.toMap() }), response.message)
     }
 
     @GetMapping("/{savedAddressId}")

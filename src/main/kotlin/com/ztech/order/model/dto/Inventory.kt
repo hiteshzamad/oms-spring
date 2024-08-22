@@ -8,5 +8,5 @@ data class InventoryCreateRequest(
 
 data class InventoryUpdateRequest(
     val price: Double,
-    val quantity: Int
+    val quantityChange: Int
 )

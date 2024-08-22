@@ -31,11 +31,7 @@ class SellerInventoryController(
         @RequestParam(defaultValue = "10") pageSize: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = inventoryService.getInventoriesBySellerId(sellerId, page, pageSize)
-        return responseEntity(
-            response.status,
-            mapOf("inventories" to response.data?.map { it.toMap() }),
-            response.message
-        )
+        return responseEntity(response.status, mapOf("inventories" to response.data?.map { it.toMap() }), response.message)
     }
 
     @GetMapping("/{inventoryId}")
@@ -53,8 +49,8 @@ class SellerInventoryController(
         @PathVariable inventoryId: Int,
         @RequestBody inventory: InventoryUpdateRequest
     ): ResponseEntity<ControllerResponse> {
-        val (price, quantity) = inventory
-        val response = inventoryService.updateInventory(sellerId, inventoryId, quantity, price)
+        val (price, quantityChange) = inventory
+        val response = inventoryService.updateInventory(sellerId, inventoryId, quantityChange, price)
         return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 

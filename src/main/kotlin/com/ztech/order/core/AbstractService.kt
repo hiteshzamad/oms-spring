@@ -4,7 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 
 abstract class AbstractService {
-    fun <T> tryCatchDaoCall(block: () -> ServiceResponse<T>): ServiceResponse<T> {
+    fun <T> tryCatch(block: () -> ServiceResponse<T>): ServiceResponse<T> {
         return try {
             block()
         } catch (e: EmptyResultDataAccessException) {
@@ -21,7 +21,7 @@ abstract class AbstractService {
                 else -> ServiceResponse(Status.INVALID_INPUT)
             }
         } catch (e: Exception) {
-            println(e.javaClass.name + ' ' + e.message)
+            println(e.message)
             ServiceResponse(Status.ERROR)
         }
     }

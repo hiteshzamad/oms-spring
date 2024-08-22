@@ -15,16 +15,15 @@ fun responseEntity(status: Status, map: Map<String, Any?>? = null, message: Stri
     return ResponseEntity(
         responseBody(map, statusCode, message), statusCode
     )
-
 }
 
 fun responseBody(map: Map<String, Any?>?, status: HttpStatus, message: String?) = ResponseDto(
     map, message ?: when (status) {
         HttpStatus.OK -> "Success"
-        HttpStatus.CONFLICT -> "Conflict"
+        HttpStatus.CONFLICT -> "Data Conflict"
         HttpStatus.INTERNAL_SERVER_ERROR -> "Internal Server Error"
         HttpStatus.NOT_FOUND -> "Resource Not Found"
-        HttpStatus.BAD_REQUEST -> "Invalid Input"
+        HttpStatus.BAD_REQUEST -> "Invalid Request"
         HttpStatus.METHOD_NOT_ALLOWED -> "Method Not Allowed"
         else -> null
     }

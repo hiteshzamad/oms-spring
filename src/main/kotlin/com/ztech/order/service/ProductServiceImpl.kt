@@ -11,11 +11,11 @@ import com.ztech.order.model.entity.Product as ProductEntity
 
 @Service
 class ProductServiceImpl(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
 ) : AbstractService() {
     fun createProduct(
         name: String, category: String, measure: String, size: Double
-    ) = tryCatchDaoCall {
+    ) = tryCatch {
         val savedEntity = productRepository.save(ProductEntity().also {
             it.name = name
             it.category = category
@@ -25,15 +25,14 @@ class ProductServiceImpl(
         ServiceResponse(Status.SUCCESS, savedEntity.toDomain())
     }
 
-    fun getProductsByName(name: String, page: Int, pageSize: Int) = tryCatchDaoCall {
-        val products =
-            productRepository.findByNameContainingIgnoreCase(name, PageRequest.of(page, pageSize)).map { it.toDomain() }
-        ServiceResponse(Status.SUCCESS, products)
+    fun getProductsByName(name: String, page: Int, pageSize: Int) = tryCatch {
+        val entities = productRepository.findByNameContainingIgnoreCase(name, PageRequest.of(page, pageSize))
+        ServiceResponse(Status.SUCCESS, entities.map { it.toDomain() })
     }
 
-    fun getProduct(productId: Int) = tryCatchDaoCall {
-        val product = productRepository.findByProductId(productId).toDomain()
-        ServiceResponse(Status.SUCCESS, product)
+    fun getProduct(productId: Int) = tryCatch {
+        val entity = productRepository.findByProductId(productId)
+        ServiceResponse(Status.SUCCESS, entity.toDomain())
     }
 
 }

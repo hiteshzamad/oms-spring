@@ -29,7 +29,7 @@ class CustomerCartController(
         @PathVariable customerId: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = cartService.getCartsByCustomerId(customerId)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseEntity(response.status, mapOf("carts" to response.data?.map { it.toMap() }), response.message)
     }
 
     @GetMapping("/{cartId}")
@@ -47,8 +47,8 @@ class CustomerCartController(
         @PathVariable cartId: Int,
         @RequestBody cart: CartUpdateRequest
     ): ResponseEntity<ControllerResponse> {
-        val (quantity) = cart
-        val response = cartService.updateCart(customerId, cartId, quantity)
+        val (quantityChange) = cart
+        val response = cartService.updateOrDeleteCart(customerId, cartId, quantityChange)
         return responseEntity(response.status, response.data?.toMap(), response.message)
     }
 

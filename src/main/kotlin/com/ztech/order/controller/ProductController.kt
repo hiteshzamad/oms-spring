@@ -29,7 +29,7 @@ class ProductController(
         @RequestParam(defaultValue = "10") pageSize: Int,
     ): ResponseEntity<ControllerResponse> {
         val response = productService.getProductsByName(name, page, pageSize)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseEntity(response.status, mapOf("products" to response.data?.map { it.toMap() }), response.message)
     }
 
     @GetMapping("/{productId}")

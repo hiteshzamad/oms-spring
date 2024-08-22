@@ -19,8 +19,6 @@ fun Seller.toMap() = mapOf(
     "name" to this.name
 )
 
-fun List<SavedAddress>.toMap() = mapOf("savedAddresses" to this.map { it.toMap() })
-
 fun SavedAddress.toMap() = mapOf(
     "addressId" to this.addressId,
     "name" to this.name,
@@ -34,8 +32,6 @@ fun SavedAddress.toMap() = mapOf(
     "pincode" to this.pincode
 )
 
-fun List<Product>.toMap() = mapOf("products" to this.map { it.toMap() })
-
 fun Product.toMap() = mapOf(
     "productId" to this.productId,
     "name" to this.name,
@@ -44,8 +40,6 @@ fun Product.toMap() = mapOf(
     "size" to this.size
 )
 
-fun List<Inventory>.toMap() = mapOf("inventories" to this.map { it.toMap() })
-
 fun Inventory.toMap() = mapOf(
     "inventoryId" to this.inventoryId,
     "quantity" to this.quantity,
@@ -53,8 +47,6 @@ fun Inventory.toMap() = mapOf(
     "seller" to this.seller?.toMap(),
     "product" to this.product?.toMap()
 )
-
-fun List<Cart>.toMap() = mapOf("carts" to this.map { it.toMap() })
 
 fun Cart.toMap() = mapOf(
     "cartId" to this.cartId,
@@ -65,8 +57,6 @@ fun Cart.toMap() = mapOf(
 fun OrderPayment.toMap() = mapOf(
     "method" to this.method
 )
-
-fun List<OrderStatus>.toMap() = mapOf("orderStatuses" to this.map { it.toMap() })
 
 fun OrderStatus.toMap() = mapOf(
     "status" to this.status,
@@ -85,8 +75,6 @@ fun OrderAddress.toMap() = mapOf(
     "pincode" to this.pincode
 )
 
-fun List<OrderItem>.toMap() = mapOf("orderItems" to this.map { it.toMap() })
-
 fun OrderItem.toMap() = mapOf(
     "quantity" to this.quantity,
     "price" to this.price,
@@ -96,10 +84,13 @@ fun OrderItem.toMap() = mapOf(
 
 fun Order.toMap() = mapOf(
     "orderId" to this.orderId,
-    "orderStatuses" to this.orderStatuses.toMap(),
+    "orderStatuses" to this.orderStatuses.map { it.toMap() },
     "orderAddress" to this.orderAddress.toMap(),
-    "orderItems" to this.orderItems.toMap(),
+    "orderItems" to this.orderItems.map { it.toMap() },
     "orderPayment" to this.orderPayment.toMap()
 )
 
-
+fun Checkout.toMap() = mapOf(
+    "carts" to this.carts.map { it.toMap() },
+    "totalAmount" to this.totalAmount
+)
