@@ -39,23 +39,23 @@ class CheckoutServiceImpl(
         orderService.createOrder(customerId, paymentMethod, savedAddress, carts)
     }
 
-    fun revertOrder(orderId: Int) = this.transactionHandler.execute {
-        val order = orderService.getOrderByOrderId(orderId)
-        order.orderItems.forEach { orderItem ->
-            val inventory = try {
-                inventoryService.getInventoryBySellerIdAndProductId(
-                    orderItem.seller.sellerId,
-                    orderItem.product.productId
-                )
-            } catch (e: EmptyResultDataAccessException) {
-                null
+    fun revertOrders() = transactionHandler.execute {
+        orderService.getExpiredOrders().forEach { order ->
+            order.orderItems.forEach { orderItem ->
+                val inventory = try {
+                    inventoryService.getInventoryBySellerIdAndProductId(
+                        orderItem.seller.sellerId,
+                        orderItem.product.productId
+                    )
+                } catch (e: EmptyResultDataAccessException) {
+                    null
+                }
+                if (inventory != null) {
+                    this.inventoryService.updateQuantityByInventory(inventory, orderItem.quantity)
+                    cartService.createCart(order.customerId, inventory.inventoryId, orderItem.quantity)
+                }
             }
-            if (inventory != null) {
-                this.inventoryService.updateQuantityByInventory(inventory, orderItem.quantity)
-                cartService.createCart(order.customerId, inventory.inventoryId, orderItem.quantity)
-            }
+            orderService.deleteOrder(order.orderId)
         }
-        orderService.deleteOrder(orderId)
     }
-
 }

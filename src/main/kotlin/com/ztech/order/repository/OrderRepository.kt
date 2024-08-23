@@ -1,5 +1,6 @@
 package com.ztech.order.repository
 
+import com.ztech.order.model.common.OrderStatusType
 import com.ztech.order.model.entity.Order
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
@@ -12,6 +13,8 @@ interface OrderRepository : JpaRepository<Order, Int> {
     fun findByCustomerCustomerId(customerId: Int): List<Order>
 
     @EntityGraph("Order.all")
-    fun findByOrderId(orderId: Int): Order
-
+    fun findByOrderStatusesStatusAndOrderStatusesDateLessThan(
+        status: OrderStatusType,
+        date: java.time.LocalDateTime
+    ): List<Order>
 }

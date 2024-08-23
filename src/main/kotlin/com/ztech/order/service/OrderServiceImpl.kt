@@ -90,8 +90,11 @@ class OrderServiceImpl(
     fun getOrdersByCustomerId(customerId: Int) =
         orderRepository.findByCustomerCustomerId(customerId).map { it.toDomain() }
 
-    fun getOrderByOrderId(orderId: Int) =
-        orderRepository.findByOrderId(orderId).toDomain()
+    fun getExpiredOrders() =
+        orderRepository.findByOrderStatusesStatusAndOrderStatusesDateLessThan(
+            OrderStatusType.CREATED,
+            java.time.LocalDateTime.now().minusMinutes(5)
+        ).map { it.toDomain() }
 
     fun deleteOrder(orderId: Int) = transactionHandler.execute {
         orderPaymentRepository.deleteByOrderId(orderId)

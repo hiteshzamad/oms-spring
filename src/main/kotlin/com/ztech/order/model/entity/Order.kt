@@ -19,7 +19,6 @@ import jakarta.persistence.*
         )
     ]
 )
-
 @NamedEntityGraph(
     name = "Order.all",
     attributeNodes = [
