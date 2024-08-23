@@ -1,8 +1,9 @@
 package com.ztech.order.controller
 
-import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.responseEntity
+import com.ztech.order.model.response.Response
+import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.dto.OrderCreateRequest
+import com.ztech.order.model.toMap
 import com.ztech.order.service.CheckoutServiceImpl
 import com.ztech.order.service.OrderServiceImpl
 import org.springframework.http.ResponseEntity
@@ -19,17 +20,17 @@ class CustomerOrderController(
     fun createOrder(
         @PathVariable customerId: Int,
         @RequestBody order: OrderCreateRequest
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val (savedAddressId, paymentMethod) = order
-        val response = checkoutService.createOrder(customerId, savedAddressId, paymentMethod)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        val response = checkoutService.processOrder(customerId, savedAddressId, paymentMethod)
+        return responseSuccess(response.toMap())
     }
 
     @GetMapping
     fun getOrders(
         @PathVariable customerId: Int
-    ): ResponseEntity<ControllerResponse> {
-        val response = orderService.getOrders(customerId)
-        return responseEntity(response.status, mapOf("orders" to response.data?.map { it.toMap() }), response.message)
+    ): ResponseEntity<Response> {
+        val response = orderService.getOrdersByCustomerId(customerId)
+        return responseSuccess( mapOf("orders" to response.map { it.toMap() }))
     }
 }

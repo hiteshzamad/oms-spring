@@ -16,17 +16,17 @@ data class Product(
     @Column(name = "product_id") val productId: Int? = null
 ) {
 
-    @Column(name = "name", nullable = false, length = 64)
+    @Column(name = "name", length = 64, nullable = false, updatable = false)
     lateinit var name: String
 
-    @Column(name = "category", nullable = false, length = 64)
+    @Column(name = "category", length = 64, nullable = false, updatable = false)
     lateinit var category: String
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "measure", nullable = false)
+    @Column(name = "measure", nullable = false, updatable = false)
     lateinit var measure: Measure
 
-    @Column(name = "size", nullable = false, precision = 10, scale = 2)
+    @Column(name = "size", precision = 10, scale = 2, nullable = false, updatable = false)
     lateinit var size: BigDecimal
 }
 

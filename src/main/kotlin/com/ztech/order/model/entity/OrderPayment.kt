@@ -23,7 +23,7 @@ data class OrderPayment(
     val transactionDate: LocalDateTime = LocalDateTime.now()
 ) {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     lateinit var order: Order
 
@@ -31,10 +31,10 @@ data class OrderPayment(
     @Enumerated(EnumType.STRING)
     lateinit var method: PaymentMethod
 
-    @Column(name = "transaction_id", length = 62)
+    @Column(name = "transaction_id", length = 64)
     var transactionId: String? = null
 
-    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
+    @Column(name = "amount", precision = 10, scale = 2, nullable = false, updatable = false)
     lateinit var amount: BigDecimal
 
     @Column(name = "status", nullable = false)

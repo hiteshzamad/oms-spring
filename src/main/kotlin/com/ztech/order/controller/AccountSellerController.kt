@@ -1,9 +1,9 @@
 package com.ztech.order.controller
 
-import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.responseEntity
-import com.ztech.order.model.domain.Seller
+import com.ztech.order.model.response.Response
+import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.dto.SellerCreateRequest
+import com.ztech.order.model.toMap
 import com.ztech.order.service.SellerServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -18,26 +18,26 @@ class AccountSellerController(
     fun createSeller(
         @PathVariable accountId: Int,
         @RequestBody seller: SellerCreateRequest
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val (name) = seller
         val response = sellerService.createSeller(accountId, name)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseSuccess(response.toMap())
     }
 
     @GetMapping
     fun getSellers(
         @PathVariable accountId: Int,
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val response = sellerService.getSellerByAccountId(accountId)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseSuccess(response.toMap())
     }
 
     @GetMapping("/{sellerId}")
     fun getSeller(
         @PathVariable sellerId: Int
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val response = sellerService.getSellerBySellerId(sellerId)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseSuccess(response.toMap())
     }
 
 }

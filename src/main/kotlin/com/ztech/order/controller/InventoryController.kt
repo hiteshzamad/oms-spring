@@ -1,7 +1,8 @@
 package com.ztech.order.controller
 
-import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.responseEntity
+import com.ztech.order.model.response.Response
+import com.ztech.order.model.response.responseSuccess
+import com.ztech.order.model.toMap
 import com.ztech.order.service.InventoryServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -17,17 +18,17 @@ class InventoryController(
         @RequestParam(defaultValue = "") name: String,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") pageSize: Int,
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val response = inventoryService.getInventoriesByProductName(name, page, pageSize)
-        return responseEntity(response.status, mapOf("inventories" to response.data?.map { it.toMap() }), response.message)
+        return responseSuccess( mapOf("inventories" to response.map { it.toMap() }))
     }
 
     @GetMapping("/{inventoryId}")
     fun getInventory(
         @PathVariable inventoryId: Int
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val response = inventoryService.getInventoryByInventoryId(inventoryId)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseSuccess(response.toMap())
     }
 
 }

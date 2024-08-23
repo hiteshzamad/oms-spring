@@ -25,14 +25,14 @@ data class Inventory(
 ) {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false, updatable = false)
     lateinit var product: Product
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", nullable = false)
+    @JoinColumn(name = "seller_id", nullable = false, updatable = false)
     lateinit var seller: Seller
 
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "price", precision = 10, scale = 2, nullable = false)
     lateinit var price: BigDecimal
 
     @Column(name = "quantity", nullable = false)

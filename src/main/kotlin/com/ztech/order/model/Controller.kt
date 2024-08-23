@@ -1,4 +1,4 @@
-package com.ztech.order.controller
+package com.ztech.order.model
 
 import com.ztech.order.model.domain.*
 

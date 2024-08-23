@@ -19,10 +19,10 @@ data class Account(
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
-    @Column(name = "username", nullable = false, length = 32)
+    @Column(name = "username", length = 32, nullable = false, updatable = false)
     lateinit var username: String
 
-    @Column(name = "password", nullable = false, length = 255)
+    @Column(name = "password", length = 255, nullable = false)
     lateinit var password: String
 
     @Column(name = "email", length = 64)
@@ -30,5 +30,4 @@ data class Account(
 
     @Column(name = "mobile", length = 15)
     var mobile: String? = null
-
 }

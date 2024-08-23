@@ -1,7 +1,8 @@
 package com.ztech.order.controller
 
-import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.responseEntity
+import com.ztech.order.model.response.Response
+import com.ztech.order.model.response.responseSuccess
+import com.ztech.order.model.toMap
 import com.ztech.order.service.CheckoutServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,9 +19,9 @@ class CheckoutController(
     @PostMapping
     fun createCheckout(
         @PathVariable customerId: Int,
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val response = checkoutService.checkout(customerId)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseSuccess(response.toMap())
     }
 
 }

@@ -15,11 +15,10 @@ data class Seller(
     @Column(name = "seller_id")
     val sellerId: Int? = null
 ) {
-
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "account_id", nullable = false, updatable = false)
     lateinit var account: Account
 
-    @Column(name = "name", nullable = false, length = 64)
+    @Column(name = "name", length = 64, nullable = false, updatable = false)
     lateinit var name: String
 }

@@ -9,7 +9,6 @@ import java.time.LocalDateTime
     name = "order_status", uniqueConstraints = [
         UniqueConstraint(name = "unicst_order_id_status", columnNames = ["order_id", "status"])
     ]
-
 )
 data class OrderStatus(
     @Id
@@ -19,12 +18,11 @@ data class OrderStatus(
     @Column(name = "date", nullable = false, updatable = false)
     val date: LocalDateTime = LocalDateTime.now()
 ) {
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     lateinit var order: Order
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     lateinit var status: OrderStatusType
 }

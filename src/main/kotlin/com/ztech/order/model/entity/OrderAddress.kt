@@ -4,10 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(
-    name = "order_address",
-    uniqueConstraints = [
-        UniqueConstraint(name = "unicst_order_id", columnNames = ["order_id"])
-    ]
+    name = "order_address"
 )
 data class OrderAddress(
     @Id
@@ -15,34 +12,35 @@ data class OrderAddress(
     @Column(name = "order_address_id")
     val orderAddressId: Int? = null
 ) {
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     lateinit var order: Order
 
-    @Column(name = "name", nullable = false, length = 64)
+    @Column(name = "name", length = 64, nullable = false, updatable = false)
     lateinit var name: String
 
-    @Column(name = "mobile", nullable = false, length = 15)
+    @Column(name = "mobile", length = 15, nullable = false, updatable = false)
     lateinit var mobile: String
 
-    @Column(name = "address_1", nullable = false, length = 255)
+    @Column(name = "address_1", length = 255, nullable = false, updatable = false)
     lateinit var address1: String
 
-    @Column(name = "address_2", length = 255)
+    @Column(name = "address_2", length = 255, updatable = false)
     var address2: String? = null
 
-    @Column(name = "address_3", length = 255)
+    @Column(name = "address_3", length = 255, updatable = false)
     var address3: String? = null
 
-    @Column(name = "city", nullable = false, length = 64)
+    @Column(name = "city", length = 64, nullable = false, updatable = false)
     lateinit var city: String
 
-    @Column(name = "state", nullable = false, length = 64)
+    @Column(name = "state", length = 64, nullable = false, updatable = false)
     lateinit var state: String
 
-    @Column(name = "country", nullable = false, length = 64)
+    @Column(name = "country", length = 64, nullable = false, updatable = false)
     lateinit var country: String
 
-    @Column(name = "pincode", nullable = false, length = 20)
+    @Column(name = "pincode", length = 20, nullable = false, updatable = false)
     lateinit var pincode: String
 }

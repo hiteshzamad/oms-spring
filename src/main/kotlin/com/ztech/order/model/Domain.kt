@@ -1,4 +1,4 @@
-package com.ztech.order.service
+package com.ztech.order.model
 
 import com.ztech.order.model.entity.*
 
@@ -90,12 +90,9 @@ fun OrderPayment.toDomain() = com.ztech.order.model.domain.OrderPayment(
     amount = amount.toDouble(),
 )
 
-fun Order.toDomain(
-    orderAddress: OrderAddress,
-    orderPayment: OrderPayment,
-    orderItems: List<OrderItem>,
-    orderStatuses: List<OrderStatus>
-) = com.ztech.order.model.domain.Order(orderId = orderId!!,
+fun Order.toDomain() = com.ztech.order.model.domain.Order(
+    orderId = orderId!!,
+    customerId = customer.customerId!!,
     orderPayment = orderPayment.toDomain(),
     orderAddress = orderAddress.toDomain(),
     orderItems = orderItems.map { it.toDomain() },

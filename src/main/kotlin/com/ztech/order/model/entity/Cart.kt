@@ -17,7 +17,7 @@ import jakarta.persistence.*
 )
 @Table(
     name = "cart", uniqueConstraints = [
-        UniqueConstraint(columnNames = ["inventory_id", "customer_id"])
+        UniqueConstraint(name = "unicst_inventory_customer", columnNames = ["inventory_id", "customer_id"])
     ]
 )
 data class Cart(
@@ -27,11 +27,11 @@ data class Cart(
     val cartId: Int? = null
 ) {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false, updatable = false)
     lateinit var customer: Customer
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inventory_id", nullable = false)
+    @JoinColumn(name = "inventory_id", nullable = false, updatable = false)
     lateinit var inventory: Inventory
 
     @Column(name = "quantity", nullable = false)

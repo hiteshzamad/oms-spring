@@ -4,6 +4,6 @@ import java.time.LocalDateTime
 
 data class OrderStatus(
     val orderStatusId: Int,
-    var status: String,
+    val status: String,
     val date: LocalDateTime,
 )

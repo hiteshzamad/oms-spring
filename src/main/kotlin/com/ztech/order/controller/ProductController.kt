@@ -1,8 +1,9 @@
 package com.ztech.order.controller
 
-import com.ztech.order.core.ControllerResponse
-import com.ztech.order.core.responseEntity
+import com.ztech.order.model.response.Response
+import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.dto.ProductCreateRequest
+import com.ztech.order.model.toMap
 import com.ztech.order.service.ProductServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -16,10 +17,10 @@ class ProductController(
     @PostMapping
     fun createProduct(
         @RequestBody product: ProductCreateRequest
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val (name, category, measure, size) = product
         val response = productService.createProduct(name, category, measure, size)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseSuccess(response.toMap())
     }
 
     @GetMapping
@@ -27,17 +28,17 @@ class ProductController(
         @RequestParam(defaultValue = "") name: String,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") pageSize: Int,
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val response = productService.getProductsByName(name, page, pageSize)
-        return responseEntity(response.status, mapOf("products" to response.data?.map { it.toMap() }), response.message)
+        return responseSuccess( mapOf("products" to response.map { it.toMap() }))
     }
 
     @GetMapping("/{productId}")
     fun getProduct(
         @PathVariable productId: Int
-    ): ResponseEntity<ControllerResponse> {
+    ): ResponseEntity<Response> {
         val response = productService.getProduct(productId)
-        return responseEntity(response.status, response.data?.toMap(), response.message)
+        return responseSuccess(response.toMap())
     }
 
 }

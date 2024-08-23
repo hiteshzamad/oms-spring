@@ -1,4 +1,4 @@
-package com.ztech.order.core
+package com.ztech.order.component
 
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class TransactionHandler {
     @Transactional
-    fun <T> execute(block: () -> ServiceResponse<T>): ServiceResponse<T> {
+    fun <T> execute(block: () -> T): T {
         return block()
     }
 }
