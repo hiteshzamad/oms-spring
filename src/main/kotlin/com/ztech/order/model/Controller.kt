@@ -58,7 +58,7 @@ fun OrderPayment.toMap() = mapOf(
     "method" to this.method
 )
 
-fun OrderStatus.toMap() = mapOf(
+fun OrderItemStatus.toMap() = mapOf(
     "status" to this.status,
     "date" to this.date
 )
@@ -76,18 +76,19 @@ fun OrderAddress.toMap() = mapOf(
 )
 
 fun OrderItem.toMap() = mapOf(
+    "orderItemId" to this.orderItemId,
     "quantity" to this.quantity,
     "price" to this.price,
-    "seller" to this.seller.toMap(),
-    "product" to this.product.toMap()
+    "seller" to this.seller?.toMap(),
+    "product" to this.product.toMap(),
+    "status" to this.statuses.map { it.toMap() }
 )
 
 fun Order.toMap() = mapOf(
     "orderId" to this.orderId,
-    "orderStatuses" to this.orderStatuses.map { it.toMap() },
     "orderAddress" to this.orderAddress.toMap(),
     "orderItems" to this.orderItems.map { it.toMap() },
-    "orderPayment" to this.orderPayment.toMap()
+    "orderPayment" to this.orderPayment?.toMap()
 )
 
 fun Checkout.toMap() = mapOf(

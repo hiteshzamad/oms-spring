@@ -1,6 +1,7 @@
 package com.ztech.order.controller
 
 import com.ztech.order.model.dto.OrderCreateRequest
+import com.ztech.order.model.dto.OrderItemStatusUpdateRequest
 import com.ztech.order.model.dto.OrderUpdateRequest
 import com.ztech.order.model.response.Response
 import com.ztech.order.model.response.responseSuccess
@@ -11,47 +12,37 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/customers/{customerId}/orders")
-class CustomerOrderController(
+@RequestMapping("/sellers/{sellerId}/orders")
+class SellerOrderController(
     private val checkoutService: CheckoutServiceImpl,
     private val orderService: OrderServiceImpl
 ) {
 
-    @PostMapping
-    fun createOrder(
-        @PathVariable customerId: Int,
-        @RequestBody order: OrderCreateRequest
-    ): ResponseEntity<Response> {
-        val (savedAddressId, paymentMethod) = order
-        val response = checkoutService.processOrder(customerId, savedAddressId, paymentMethod)
-        return responseSuccess(response.toMap())
-    }
-
     @GetMapping
     fun getOrders(
-        @PathVariable customerId: Int
+        @PathVariable sellerId: Int
     ): ResponseEntity<Response> {
-        val response = orderService.getOrdersByCustomerId(customerId)
+        val response = orderService.getOrderBySellerId(sellerId)
         return responseSuccess(mapOf("orders" to response.map { it.toMap() }))
     }
 
     @GetMapping("/{orderId}")
     fun getOrder(
-        @PathVariable customerId: Int,
+        @PathVariable sellerId: Int,
         @PathVariable orderId: Int
     ): ResponseEntity<Response> {
-        val response = orderService.getOrderByOrderId(customerId)
+        val response = orderService.getOrderBySellerIdAndOrderId(sellerId, orderId)
         return responseSuccess(response.toMap())
     }
 
     @PutMapping("/{orderId}")
     fun updateOrder(
-        @PathVariable customerId: Int,
+        @PathVariable sellerId: Int,
         @PathVariable orderId: Int,
-        @RequestBody order: OrderUpdateRequest
+        @RequestBody orderItem: OrderItemStatusUpdateRequest
     ): ResponseEntity<Response> {
-        val (transactionId) = order
-        orderService.updateOrderByOrderId(orderId, transactionId)
+        val (orderItemId, status) = orderItem
+        orderService.updateOrderItemStatusBySellerIdAndOrderItemId(sellerId, orderItemId, status)
         return responseSuccess()
     }
 

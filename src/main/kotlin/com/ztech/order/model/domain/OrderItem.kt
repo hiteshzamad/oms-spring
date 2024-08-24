@@ -5,5 +5,6 @@ data class OrderItem(
     val price: Double,
     val quantity: Int,
     val product: Product,
-    val seller: Seller,
+    val seller: Seller?,
+    val statuses: List<OrderItemStatus>
 )

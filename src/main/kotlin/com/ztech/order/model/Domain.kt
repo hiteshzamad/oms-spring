@@ -56,12 +56,13 @@ fun Cart.toDomain(inventory: Boolean = true) = com.ztech.order.model.domain.Cart
     inventory = if (inventory) this.inventory.toDomain() else null,
 )
 
-fun OrderItem.toDomain() = com.ztech.order.model.domain.OrderItem(
+fun OrderItem.toDomain(_seller: Boolean = true) = com.ztech.order.model.domain.OrderItem(
     orderItemId = orderItemId!!,
     quantity = quantity,
     price = price.toDouble(),
     product = product.toDomain(),
-    seller = seller.toDomain(),
+    seller = if (_seller) seller.toDomain() else null,
+    statuses = statuses.map { it.toDomain() },
 )
 
 fun OrderAddress.toDomain() = com.ztech.order.model.domain.OrderAddress(
@@ -77,8 +78,8 @@ fun OrderAddress.toDomain() = com.ztech.order.model.domain.OrderAddress(
     pincode = pincode,
 )
 
-fun OrderStatus.toDomain() = com.ztech.order.model.domain.OrderStatus(
-    orderStatusId = orderStatusId!!,
+fun OrderItemStatus.toDomain() = com.ztech.order.model.domain.OrderItemStatus(
+    orderItemStatusId = orderItemStatusId!!,
     date = date,
     status = status.name.lowercase(),
 )
@@ -90,11 +91,10 @@ fun OrderPayment.toDomain() = com.ztech.order.model.domain.OrderPayment(
     amount = amount.toDouble(),
 )
 
-fun Order.toDomain() = com.ztech.order.model.domain.Order(
+fun Order.toDomain(_payment: Boolean = true, _seller: Boolean = true) = com.ztech.order.model.domain.Order(
     orderId = orderId!!,
     customerId = customer.customerId!!,
-    orderPayment = orderPayment.toDomain(),
+    orderPayment = if (_payment) orderPayment.toDomain() else null,
     orderAddress = orderAddress.toDomain(),
-    orderItems = orderItems.map { it.toDomain() },
-    orderStatuses = orderStatuses.map { it.toDomain() }
+    orderItems = orderItems.map { it.toDomain(_seller) },
 )

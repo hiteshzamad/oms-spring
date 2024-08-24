@@ -32,4 +32,8 @@ data class OrderItem(
 
     @Column(name = "quantity", nullable = false, updatable = false)
     var quantity: Int = 0
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "orderItem")
+    lateinit var statuses: MutableSet<OrderItemStatus>
+
 }

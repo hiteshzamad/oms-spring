@@ -18,9 +18,6 @@ data class OrderPayment(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_payment_id")
     val orderPaymentId: Int? = null,
-
-    @Column(name = "transaction_date", nullable = false)
-    val transactionDate: LocalDateTime = LocalDateTime.now()
 ) {
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -33,6 +30,9 @@ data class OrderPayment(
 
     @Column(name = "transaction_id", length = 64)
     var transactionId: String? = null
+
+    @Column(name = "transaction_date")
+    val transactionDate: LocalDateTime? = null
 
     @Column(name = "amount", precision = 10, scale = 2, nullable = false, updatable = false)
     lateinit var amount: BigDecimal

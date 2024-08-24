@@ -1,21 +1,25 @@
 package com.ztech.order.model.entity
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "orders")
 @NamedEntityGraph(
-    name = "Order.address_payment_items_statuses",
+    name = "Order.address_payment_items",
     attributeNodes = [
         NamedAttributeNode("orderAddress"),
         NamedAttributeNode("orderPayment"),
-        NamedAttributeNode("orderItems", subgraph = "orderItemProductSeller"),
-        NamedAttributeNode("orderStatuses")
+        NamedAttributeNode("orderItems", subgraph = "orderItemProductSellerStatuses"),
     ],
     subgraphs = [
         NamedSubgraph(
-            name = "orderItemProductSeller",
-            attributeNodes = [NamedAttributeNode("product"), NamedAttributeNode("seller")]
+            name = "orderItemProductSellerStatuses",
+            attributeNodes = [
+                NamedAttributeNode("product"),
+                NamedAttributeNode("seller"),
+                NamedAttributeNode("statuses")
+            ]
         )
     ]
 )
@@ -24,14 +28,17 @@ import jakarta.persistence.*
     attributeNodes = [
         NamedAttributeNode("orderAddress"),
         NamedAttributeNode("orderPayment"),
-        NamedAttributeNode("orderItems", subgraph = "orderItemProductSeller"),
-        NamedAttributeNode("orderStatuses"),
+        NamedAttributeNode("orderItems", subgraph = "orderItemProductSellerStatuses"),
         NamedAttributeNode("customer")
     ],
     subgraphs = [
         NamedSubgraph(
-            name = "orderItemProductSeller",
-            attributeNodes = [NamedAttributeNode("product"), NamedAttributeNode("seller")]
+            name = "orderItemProductSellerStatuses",
+            attributeNodes = [
+                NamedAttributeNode("product"),
+                NamedAttributeNode("seller"),
+                NamedAttributeNode("statuses")
+            ]
         )
     ]
 )
@@ -39,7 +46,9 @@ data class Order(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    val orderId: Int? = null
+    val orderId: Int? = null,
+    @Column(name = "created_at", nullable = false, updatable = false)
+    val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,8 +63,5 @@ data class Order(
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     lateinit var orderItems: MutableSet<OrderItem>
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    lateinit var orderStatuses: MutableSet<OrderStatus>
 
 }

@@ -44,7 +44,7 @@ class CheckoutServiceImpl(
             order.orderItems.forEach { orderItem ->
                 val inventory = try {
                     inventoryService.getInventoryBySellerIdAndProductId(
-                        orderItem.seller.sellerId,
+                        orderItem.seller!!.sellerId,
                         orderItem.product.productId
                     )
                 } catch (e: EmptyResultDataAccessException) {
@@ -55,7 +55,7 @@ class CheckoutServiceImpl(
                     cartService.createCart(order.customerId, inventory.inventoryId, orderItem.quantity)
                 }
             }
-            orderService.deleteOrder(order.orderId)
+            orderService.deleteOrder(order.orderId, order.orderItems.map { it.orderItemId })
         }
     }
 }
