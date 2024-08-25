@@ -40,7 +40,7 @@ class CustomerOrderController(
         @PathVariable customerId: Int,
         @PathVariable orderId: Int
     ): ResponseEntity<Response> {
-        val response = orderService.getOrderByOrderId(customerId)
+        val response = orderService.getOrderByCustomerIdAndOrderId(customerId, orderId)
         return responseSuccess(response.toMap())
     }
 
@@ -51,7 +51,7 @@ class CustomerOrderController(
         @RequestBody order: OrderUpdateRequest
     ): ResponseEntity<Response> {
         val (transactionId) = order
-        orderService.updateOrderByOrderId(orderId, transactionId)
+        orderService.updateOrderByCustomerIdAndOrderId(customerId, orderId, transactionId)
         return responseSuccess()
     }
 

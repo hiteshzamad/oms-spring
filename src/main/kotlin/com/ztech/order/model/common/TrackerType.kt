@@ -1,5 +1,5 @@
 package com.ztech.order.model.common
 
-enum class OrderItemStatusType {
+enum class TrackerType {
     CREATED, CONFIRMED, DISPATCHED, DELIVERED
 }

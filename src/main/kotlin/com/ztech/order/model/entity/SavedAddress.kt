@@ -8,7 +8,7 @@ data class SavedAddress(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "saved_address_id")
-    val savedAddressId: Int? = null
+    val id: Int? = null
 ) {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false, updatable = false)

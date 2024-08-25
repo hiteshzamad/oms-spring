@@ -3,7 +3,7 @@ package com.ztech.order.model
 import com.ztech.order.model.entity.*
 
 fun Account.toDomain() = com.ztech.order.model.domain.Account(
-    accountId = this.accountId!!,
+    id = id!!,
     username = this.username,
     password = this.password,
     email = this.email,
@@ -12,17 +12,17 @@ fun Account.toDomain() = com.ztech.order.model.domain.Account(
 )
 
 fun Customer.toDomain() = com.ztech.order.model.domain.Customer(
-    customerId = this.customerId!!,
+    id = id!!,
     name = name,
 )
 
 fun Seller.toDomain() = com.ztech.order.model.domain.Seller(
-    sellerId = this.sellerId!!,
+    id = id!!,
     name = name,
 )
 
 fun Product.toDomain() = com.ztech.order.model.domain.Product(
-    productId = productId!!,
+    id = id!!,
     name = name,
     category = category,
     measure = measure.name.lowercase(),
@@ -30,7 +30,7 @@ fun Product.toDomain() = com.ztech.order.model.domain.Product(
 )
 
 fun SavedAddress.toDomain() = com.ztech.order.model.domain.SavedAddress(
-    addressId = savedAddressId!!,
+    id = id!!,
     name = name,
     mobile = mobile,
     address1 = address1,
@@ -42,31 +42,34 @@ fun SavedAddress.toDomain() = com.ztech.order.model.domain.SavedAddress(
     pincode = pincode,
 )
 
-fun Inventory.toDomain(product: Boolean = true, seller: Boolean = true) = com.ztech.order.model.domain.Inventory(
-    inventoryId = inventoryId!!,
+fun Inventory.toDomain(_product: Boolean = true, _seller: Boolean = true) = com.ztech.order.model.domain.Inventory(
+    id = id!!,
     quantity = quantity,
     price = price.toDouble(),
-    product = if (product) this.product.toDomain() else null,
-    seller = if (seller) this.seller.toDomain() else null,
+    product = if (_product) this.product.toDomain() else null,
+    seller = if (_seller) this.seller.toDomain() else null,
 )
 
-fun Cart.toDomain(inventory: Boolean = true) = com.ztech.order.model.domain.Cart(
-    cartId = cartId!!,
-    quantity = quantity,
-    inventory = if (inventory) this.inventory.toDomain() else null,
-)
+fun Cart.toDomain(_inventory: Boolean = true, _product: Boolean = true, _seller: Boolean = true) =
+    com.ztech.order.model.domain.Cart(
+        id = id!!,
+        quantity = quantity,
+        inventory = if (_inventory) this.inventory.toDomain(_product, _seller) else null,
+    )
 
-fun OrderItem.toDomain(_seller: Boolean = true) = com.ztech.order.model.domain.OrderItem(
-    orderItemId = orderItemId!!,
+fun PurchaseItem.toDomain(
+    _product: Boolean = true, _seller: Boolean = true, _tracker: Boolean = true
+) = com.ztech.order.model.domain.PurchaseItem(
+    id = id!!,
     quantity = quantity,
     price = price.toDouble(),
-    product = product.toDomain(),
+    product = if (_product) product.toDomain() else null,
     seller = if (_seller) seller.toDomain() else null,
-    statuses = statuses.map { it.toDomain() },
+    trackers = if (_tracker) trackers.map { it.toDomain() } else null,
 )
 
-fun OrderAddress.toDomain() = com.ztech.order.model.domain.OrderAddress(
-    addressId = orderAddressId!!,
+fun DeliveryAddress.toDomain() = com.ztech.order.model.domain.DeliveryAddress(
+    id = id!!,
     name = name,
     mobile = mobile,
     address1 = address1,
@@ -78,23 +81,30 @@ fun OrderAddress.toDomain() = com.ztech.order.model.domain.OrderAddress(
     pincode = pincode,
 )
 
-fun OrderItemStatus.toDomain() = com.ztech.order.model.domain.OrderItemStatus(
-    orderItemStatusId = orderItemStatusId!!,
+fun Tracker.toDomain() = com.ztech.order.model.domain.Tracker(
+    id = id!!,
     date = date,
     status = status.name.lowercase(),
 )
 
-fun OrderPayment.toDomain() = com.ztech.order.model.domain.OrderPayment(
-    paymentId = orderPaymentId!!,
+fun Payment.toDomain() = com.ztech.order.model.domain.Payment(
+    id = id!!,
     status = status.name.lowercase(),
     method = method.name.lowercase(),
     amount = amount.toDouble(),
 )
 
-fun Order.toDomain(_payment: Boolean = true, _seller: Boolean = true) = com.ztech.order.model.domain.Order(
-    orderId = orderId!!,
-    customerId = customer.customerId!!,
-    orderPayment = if (_payment) orderPayment.toDomain() else null,
-    orderAddress = orderAddress.toDomain(),
-    orderItems = orderItems.map { it.toDomain(_seller) },
+fun Order.toDomain(
+    _payment: Boolean = true,
+    _product: Boolean = true,
+    _seller: Boolean = true,
+    _address: Boolean = true,
+    _item: Boolean = true,
+    _tracker: Boolean = true
+) = com.ztech.order.model.domain.Order(
+    id = id!!,
+    customerId = customer.id!!,
+    payment = if (_payment) payment.toDomain() else null,
+    deliveryAddress = if (_address) address.toDomain() else null,
+    purchaseItems = if (_item) purchaseItems.map { it.toDomain(_product, _seller, _tracker) } else null,
 )

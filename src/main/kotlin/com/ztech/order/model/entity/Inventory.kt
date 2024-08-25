@@ -5,12 +5,12 @@ import java.math.BigDecimal
 
 @Entity
 @NamedEntityGraph(
-    name = "Inventory.product",
+    name = "InventoryWithProduct",
     attributeNodes = [NamedAttributeNode("product")]
 )
 @NamedEntityGraph(
-    name = "Inventory.product_seller",
-    attributeNodes = [NamedAttributeNode("product"),NamedAttributeNode("seller")]
+    name = "InventoryWithProductAndSeller",
+    attributeNodes = [NamedAttributeNode("product"), NamedAttributeNode("seller")]
 )
 @Table(
     name = "inventory", uniqueConstraints = [
@@ -21,7 +21,7 @@ data class Inventory(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inventory_id")
-    val inventoryId: Int? = null
+    val id: Int? = null
 ) {
 
     @ManyToOne(fetch = FetchType.LAZY)

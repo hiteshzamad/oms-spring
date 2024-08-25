@@ -9,7 +9,7 @@ class OrderRevertScheduler(
     private val checkoutService: CheckoutServiceImpl
 ) {
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 100000)
     fun revertOrders() {
         checkoutService.revertOrders()
     }

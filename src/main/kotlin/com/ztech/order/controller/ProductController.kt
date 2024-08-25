@@ -1,8 +1,8 @@
 package com.ztech.order.controller
 
+import com.ztech.order.model.dto.ProductCreateRequest
 import com.ztech.order.model.response.Response
 import com.ztech.order.model.response.responseSuccess
-import com.ztech.order.model.dto.ProductCreateRequest
 import com.ztech.order.model.toMap
 import com.ztech.order.service.ProductServiceImpl
 import org.springframework.http.ResponseEntity
@@ -30,7 +30,7 @@ class ProductController(
         @RequestParam(defaultValue = "10") pageSize: Int,
     ): ResponseEntity<Response> {
         val response = productService.getProductsByName(name, page, pageSize)
-        return responseSuccess( mapOf("products" to response.map { it.toMap() }))
+        return responseSuccess(mapOf("products" to response.map { it.toMap() }))
     }
 
     @GetMapping("/{productId}")

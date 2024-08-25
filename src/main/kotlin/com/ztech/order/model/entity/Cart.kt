@@ -4,13 +4,19 @@ import jakarta.persistence.*
 
 @Entity
 @NamedEntityGraph(
-    name = "Cart.inventory.product_seller",
+    name = "CartWithInventory",
     attributeNodes = [
-        NamedAttributeNode("inventory", subgraph = "inventoryProductSeller")
+        NamedAttributeNode("inventory")
+    ]
+)
+@NamedEntityGraph(
+    name = "CartWithInventoryWithProductAndSeller",
+    attributeNodes = [
+        NamedAttributeNode("inventory", subgraph = "ProductAndSeller")
     ],
     subgraphs = [
         NamedSubgraph(
-            name = "inventoryProductSeller",
+            name = "ProductAndSeller",
             attributeNodes = [NamedAttributeNode("product"), NamedAttributeNode("seller")]
         )
     ]
@@ -24,7 +30,7 @@ data class Cart(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_id")
-    val cartId: Int? = null
+    val id: Int? = null
 ) {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false, updatable = false)

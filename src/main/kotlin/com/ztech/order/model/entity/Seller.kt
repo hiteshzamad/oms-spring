@@ -6,14 +6,14 @@ import jakarta.persistence.*
 @Table(
     name = "seller",
     uniqueConstraints = [
-        UniqueConstraint(name = "unicst_account_id", columnNames = ["account_id"])
+        UniqueConstraint(name = "unicst_account", columnNames = ["account_id"])
     ]
 )
 data class Seller(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seller_id")
-    val sellerId: Int? = null
+    val id: Int? = null
 ) {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false, updatable = false)

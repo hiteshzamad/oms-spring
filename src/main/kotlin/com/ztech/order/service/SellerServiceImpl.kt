@@ -1,9 +1,11 @@
 package com.ztech.order.service
 
+import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.entity.Account
 import com.ztech.order.model.toDomain
 import com.ztech.order.repository.SellerRepository
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrElse
 import com.ztech.order.model.entity.Seller as SellerEntity
 
 @Service
@@ -18,9 +20,13 @@ class SellerServiceImpl(
         }).toDomain()
 
     fun getSellerByAccountId(accountId: Int) =
-        sellerRepository.findByAccountAccountId(accountId).toDomain()
+        sellerRepository.findByAccountId(accountId).getOrElse {
+            throw ResourceNotFoundException("Seller not found")
+        }.toDomain()
 
     fun getSellerBySellerId(sellerId: Int) =
-        sellerRepository.findBySellerId(sellerId).toDomain()
+        sellerRepository.findById(sellerId).getOrElse {
+            throw ResourceNotFoundException("Seller not found")
+        }.toDomain()
 
 }

@@ -6,38 +6,70 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "orders")
 @NamedEntityGraph(
-    name = "Order.address_payment_items",
+    name = "OrderWithAddressAndPaymentAndPurchaseItemsWithProduct",
     attributeNodes = [
-        NamedAttributeNode("orderAddress"),
-        NamedAttributeNode("orderPayment"),
-        NamedAttributeNode("orderItems", subgraph = "orderItemProductSellerStatuses"),
+        NamedAttributeNode("address"),
+        NamedAttributeNode("payment"),
+        NamedAttributeNode("purchaseItems", subgraph = "PurchaseItemsWithProduct"),
     ],
     subgraphs = [
         NamedSubgraph(
-            name = "orderItemProductSellerStatuses",
+            name = "PurchaseItemsWithProduct",
             attributeNodes = [
                 NamedAttributeNode("product"),
-                NamedAttributeNode("seller"),
-                NamedAttributeNode("statuses")
             ]
         )
     ]
 )
 @NamedEntityGraph(
-    name = "Order.all",
+    name = "OrderWithAddressAndPaymentAndPurchaseItemsWithProductAndSeller",
     attributeNodes = [
-        NamedAttributeNode("orderAddress"),
-        NamedAttributeNode("orderPayment"),
-        NamedAttributeNode("orderItems", subgraph = "orderItemProductSellerStatuses"),
-        NamedAttributeNode("customer")
+        NamedAttributeNode("address"),
+        NamedAttributeNode("payment"),
+        NamedAttributeNode("purchaseItems", subgraph = "PurchaseItemsWithProductAndSeller"),
     ],
     subgraphs = [
         NamedSubgraph(
-            name = "orderItemProductSellerStatuses",
+            name = "PurchaseItemsWithProductAndSeller",
             attributeNodes = [
                 NamedAttributeNode("product"),
                 NamedAttributeNode("seller"),
-                NamedAttributeNode("statuses")
+            ]
+        )
+    ]
+)
+@NamedEntityGraph(
+    name = "OrderWithAddressAndPaymentAndPurchaseItemsWithProductAndTrackers",
+    attributeNodes = [
+        NamedAttributeNode("address"),
+        NamedAttributeNode("payment"),
+        NamedAttributeNode("purchaseItems", subgraph = "PurchaseItemsWithProductAndTrackers"),
+    ],
+    subgraphs = [
+        NamedSubgraph(
+            name = "PurchaseItemsWithProductAndTrackers",
+            attributeNodes = [
+                NamedAttributeNode("product"),
+                NamedAttributeNode("trackers")
+            ]
+        )
+    ]
+)
+@NamedEntityGraph(
+    name = "OrderWithCustomerAndAddressAndPaymentAndPurchaseItemsWithProductAndSellerAndTrackers",
+    attributeNodes = [
+        NamedAttributeNode("customer"),
+        NamedAttributeNode("address"),
+        NamedAttributeNode("payment"),
+        NamedAttributeNode("purchaseItems", subgraph = "PurchaseItemsWithProductAndSellerAndTrackers"),
+    ],
+    subgraphs = [
+        NamedSubgraph(
+            name = "PurchaseItemsWithProductAndSellerAndTrackers",
+            attributeNodes = [
+                NamedAttributeNode("product"),
+                NamedAttributeNode("seller"),
+                NamedAttributeNode("trackers")
             ]
         )
     ]
@@ -46,7 +78,7 @@ data class Order(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    val orderId: Int? = null,
+    val id: Int? = null,
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
@@ -56,12 +88,12 @@ data class Order(
     lateinit var customer: Customer
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "order")
-    lateinit var orderAddress: OrderAddress
+    lateinit var address: DeliveryAddress
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "order")
-    lateinit var orderPayment: OrderPayment
+    lateinit var payment: Payment
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    lateinit var orderItems: MutableSet<OrderItem>
+    lateinit var purchaseItems: MutableSet<PurchaseItem>
 
 }

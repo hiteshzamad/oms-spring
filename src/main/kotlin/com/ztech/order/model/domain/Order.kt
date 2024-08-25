@@ -1,9 +1,9 @@
 package com.ztech.order.model.domain
 
 data class Order(
-    val orderId: Int,
+    val id: Int,
     val customerId: Int,
-    val orderAddress: OrderAddress,
-    val orderPayment: OrderPayment?,
-    val orderItems: List<OrderItem>,
+    val deliveryAddress: DeliveryAddress?,
+    val payment: Payment?,
+    val purchaseItems: List<PurchaseItem>?,
 )

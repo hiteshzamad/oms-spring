@@ -5,15 +5,15 @@ import java.math.BigDecimal
 
 @Entity
 @Table(
-    name = "order_item", uniqueConstraints = [
-        UniqueConstraint(name = "unicst_order_product_seller",columnNames = ["order_id", "product_id", "seller_id"])
+    name = "purchase_item", uniqueConstraints = [
+        UniqueConstraint(name = "unicst_order_product_seller", columnNames = ["order_id", "product_id", "seller_id"])
     ]
 )
-data class OrderItem(
+data class PurchaseItem(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_item_id")
-    val orderItemId: Int? = null
+    @Column(name = "purchase_item_id")
+    val id: Int? = null
 ) {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false, updatable = false)
@@ -33,7 +33,7 @@ data class OrderItem(
     @Column(name = "quantity", nullable = false, updatable = false)
     var quantity: Int = 0
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "orderItem")
-    lateinit var statuses: MutableSet<OrderItemStatus>
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "purchaseItem")
+    lateinit var trackers: MutableSet<Tracker>
 
 }

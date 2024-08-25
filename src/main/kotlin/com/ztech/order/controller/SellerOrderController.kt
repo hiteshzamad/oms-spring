@@ -1,8 +1,6 @@
 package com.ztech.order.controller
 
-import com.ztech.order.model.dto.OrderCreateRequest
-import com.ztech.order.model.dto.OrderItemStatusUpdateRequest
-import com.ztech.order.model.dto.OrderUpdateRequest
+import com.ztech.order.model.dto.TrackerUpdateRequest
 import com.ztech.order.model.response.Response
 import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.toMap
@@ -39,10 +37,10 @@ class SellerOrderController(
     fun updateOrder(
         @PathVariable sellerId: Int,
         @PathVariable orderId: Int,
-        @RequestBody orderItem: OrderItemStatusUpdateRequest
+        @RequestBody purchaseItem: TrackerUpdateRequest
     ): ResponseEntity<Response> {
-        val (orderItemId, status) = orderItem
-        orderService.updateOrderItemStatusBySellerIdAndOrderItemId(sellerId, orderItemId, status)
+        val (purchaseItemId, status) = purchaseItem
+        orderService.updatePurchaseItemStatusBySellerIdAndPurchaseItemId(sellerId, purchaseItemId, status)
         return responseSuccess()
     }
 

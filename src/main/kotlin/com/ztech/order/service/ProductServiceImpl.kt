@@ -1,10 +1,12 @@
 package com.ztech.order.service
 
+import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.common.Measure
 import com.ztech.order.model.toDomain
 import com.ztech.order.repository.ProductRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrElse
 import com.ztech.order.model.entity.Product as ProductEntity
 
 @Service
@@ -25,6 +27,8 @@ class ProductServiceImpl(
             .map { it.toDomain() }
 
     fun getProduct(productId: Int) =
-        productRepository.findByProductId(productId).toDomain()
+        productRepository.findById(productId).getOrElse {
+            throw ResourceNotFoundException("Product not found")
+        }.toDomain()
 
 }

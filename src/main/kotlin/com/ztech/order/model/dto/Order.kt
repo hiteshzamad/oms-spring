@@ -9,7 +9,7 @@ data class OrderUpdateRequest(
     val transactionId: String
 )
 
-data class OrderItemStatusUpdateRequest(
-    val orderItemId: Int,
+data class TrackerUpdateRequest(
+    val purchaseItemId: Int,
     val status: String
 )

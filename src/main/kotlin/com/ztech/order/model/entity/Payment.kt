@@ -8,16 +8,16 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(
-    name = "order_payment",
+    name = "payment",
     uniqueConstraints = [
-        UniqueConstraint(name = "unicst_order_id", columnNames = ["order_id"])
+        UniqueConstraint(name = "unicst_order", columnNames = ["order_id"])
     ]
 )
-data class OrderPayment(
+data class Payment(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_payment_id")
-    val orderPaymentId: Int? = null,
+    @Column(name = "payment_id")
+    val id: Int? = null,
 ) {
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -31,8 +31,8 @@ data class OrderPayment(
     @Column(name = "transaction_id", length = 64)
     var transactionId: String? = null
 
-    @Column(name = "transaction_date")
-    val transactionDate: LocalDateTime? = null
+    @Column(name = "date")
+    val date: LocalDateTime? = null
 
     @Column(name = "amount", precision = 10, scale = 2, nullable = false, updatable = false)
     lateinit var amount: BigDecimal

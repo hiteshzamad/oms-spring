@@ -13,7 +13,8 @@ import java.math.BigDecimal
 data class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id") val productId: Int? = null
+    @Column(name = "product_id")
+    val id: Int? = null
 ) {
 
     @Column(name = "name", length = 64, nullable = false, updatable = false)

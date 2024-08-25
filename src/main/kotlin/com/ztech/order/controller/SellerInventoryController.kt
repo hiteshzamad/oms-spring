@@ -51,7 +51,7 @@ class SellerInventoryController(
         @RequestBody inventory: InventoryUpdateRequest
     ): ResponseEntity<Response> {
         val (price, quantityChange) = inventory
-        inventoryService.updateInventoryByInventoryId(inventoryId, quantityChange, price)
+        inventoryService.updateInventoryByInventoryIdAndSellerId(sellerId, inventoryId, quantityChange, price)
         return responseSuccess()
     }
 

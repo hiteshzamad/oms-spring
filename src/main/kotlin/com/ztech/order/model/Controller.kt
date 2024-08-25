@@ -3,24 +3,24 @@ package com.ztech.order.model
 import com.ztech.order.model.domain.*
 
 fun Account.toMap() = mapOf(
-    "accountId" to this.accountId,
+    "accountId" to this.id,
     "username" to this.username,
     "email" to this.email,
     "mobile" to this.mobile
 )
 
 fun Customer.toMap() = mapOf(
-    "customerId" to this.customerId,
+    "customerId" to this.id,
     "name" to this.name
 )
 
 fun Seller.toMap() = mapOf(
-    "sellerId" to this.sellerId,
+    "sellerId" to this.id,
     "name" to this.name
 )
 
 fun SavedAddress.toMap() = mapOf(
-    "addressId" to this.addressId,
+    "addressId" to this.id,
     "name" to this.name,
     "mobile" to this.mobile,
     "address1" to this.address1,
@@ -33,7 +33,7 @@ fun SavedAddress.toMap() = mapOf(
 )
 
 fun Product.toMap() = mapOf(
-    "productId" to this.productId,
+    "productId" to this.id,
     "name" to this.name,
     "category" to this.category,
     "measure" to this.measure,
@@ -41,7 +41,7 @@ fun Product.toMap() = mapOf(
 )
 
 fun Inventory.toMap() = mapOf(
-    "inventoryId" to this.inventoryId,
+    "inventoryId" to this.id,
     "quantity" to this.quantity,
     "price" to this.price,
     "seller" to this.seller?.toMap(),
@@ -49,21 +49,21 @@ fun Inventory.toMap() = mapOf(
 )
 
 fun Cart.toMap() = mapOf(
-    "cartId" to this.cartId,
+    "cartId" to this.id,
     "quantity" to this.quantity,
     "inventory" to this.inventory?.toMap()
 )
 
-fun OrderPayment.toMap() = mapOf(
+fun Payment.toMap() = mapOf(
     "method" to this.method
 )
 
-fun OrderItemStatus.toMap() = mapOf(
+fun Tracker.toMap() = mapOf(
     "status" to this.status,
     "date" to this.date
 )
 
-fun OrderAddress.toMap() = mapOf(
+fun DeliveryAddress.toMap() = mapOf(
     "name" to this.name,
     "mobile" to this.mobile,
     "address1" to this.address1,
@@ -75,20 +75,20 @@ fun OrderAddress.toMap() = mapOf(
     "pincode" to this.pincode
 )
 
-fun OrderItem.toMap() = mapOf(
-    "orderItemId" to this.orderItemId,
+fun PurchaseItem.toMap() = mapOf(
+    "purchaseItemId" to this.id,
     "quantity" to this.quantity,
     "price" to this.price,
     "seller" to this.seller?.toMap(),
-    "product" to this.product.toMap(),
-    "status" to this.statuses.map { it.toMap() }
+    "product" to this.product?.toMap(),
+    "status" to this.trackers?.map { it.toMap() }
 )
 
 fun Order.toMap() = mapOf(
-    "orderId" to this.orderId,
-    "orderAddress" to this.orderAddress.toMap(),
-    "orderItems" to this.orderItems.map { it.toMap() },
-    "orderPayment" to this.orderPayment?.toMap()
+    "orderId" to this.id,
+    "orderAddress" to this.deliveryAddress?.toMap(),
+    "purchaseItems" to this.purchaseItems?.map { it.toMap() },
+    "orderPayment" to this.payment?.toMap()
 )
 
 fun Checkout.toMap() = mapOf(

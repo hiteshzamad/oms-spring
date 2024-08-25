@@ -2,8 +2,8 @@ package com.ztech.order.model.domain
 
 import java.time.LocalDateTime
 
-data class OrderItemStatus(
-    val orderItemStatusId: Int,
+data class Tracker(
+    val id: Int,
     val status: String,
     val date: LocalDateTime,
 )

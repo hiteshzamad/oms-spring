@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 interface AccountRepository : JpaRepository<Account, Int> {
-    fun findByUsername(username: String): Account
-    fun findByAccountId(accountId: Int): Account
+    fun findByUsername(username: String): Optional<Account>
 
     @Modifying
     @Query(
@@ -18,10 +18,10 @@ interface AccountRepository : JpaRepository<Account, Int> {
                 "SET a.password = CASE WHEN :password IS NOT NULL THEN :password ELSE a.password END, " +
                 "a.email = CASE WHEN :email IS NOT NULL THEN :email ELSE a.email END, " +
                 "a.mobile = CASE WHEN :mobile IS NOT NULL THEN :mobile ELSE a.mobile END " +
-                "WHERE a.accountId = :accountId"
+                "WHERE a.id = :accountId"
     )
-    fun updateAccountByAccountId(
-        @Param("accountId") accountId: Int,
+    fun updateById(
+        @Param("accountId") id: Int,
         @Param("password") password: String?,
         @Param("email") email: String?,
         @Param("mobile") mobile: String?

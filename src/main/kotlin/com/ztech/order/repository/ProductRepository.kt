@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ProductRepository : JpaRepository<Product, Int> {
-    fun findByProductId(productId: Int): Product
     fun findByNameContainingIgnoreCase(name: String, pageRequest: PageRequest): List<Product>
 }

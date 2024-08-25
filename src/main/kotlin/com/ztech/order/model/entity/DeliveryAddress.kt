@@ -4,13 +4,13 @@ import jakarta.persistence.*
 
 @Entity
 @Table(
-    name = "order_address"
+    name = "delivery_address"
 )
-data class OrderAddress(
+data class DeliveryAddress(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_address_id")
-    val orderAddressId: Int? = null
+    @Column(name = "delivery_address_id")
+    val id: Int? = null
 ) {
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -1,33 +1,36 @@
 package com.ztech.order.service
 
 import com.ztech.order.component.TransactionHandler
+import com.ztech.order.exception.RequestInvalidException
+import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.common.Measure
-import com.ztech.order.model.common.OrderItemStatusType
 import com.ztech.order.model.common.PaymentMethod
 import com.ztech.order.model.common.PaymentStatus
+import com.ztech.order.model.common.TrackerType
 import com.ztech.order.model.toDomain
 import com.ztech.order.repository.*
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import kotlin.jvm.optionals.getOrElse
 import com.ztech.order.model.domain.Cart as CartDomain
 import com.ztech.order.model.domain.SavedAddress as SavedAddressDomain
 import com.ztech.order.model.entity.Customer as CustomerEntity
+import com.ztech.order.model.entity.DeliveryAddress as DeliveryAddressEntity
 import com.ztech.order.model.entity.Order as OrderEntity
-import com.ztech.order.model.entity.OrderAddress as OrderAddressEntity
-import com.ztech.order.model.entity.OrderItem as OrderItemEntity
-import com.ztech.order.model.entity.OrderItemStatus as OrderItemStatusEntity
-import com.ztech.order.model.entity.OrderPayment as OrderPaymentEntity
+import com.ztech.order.model.entity.Payment as OrderPaymentEntity
 import com.ztech.order.model.entity.Product as ProductEntity
+import com.ztech.order.model.entity.PurchaseItem as PurchaseItemEntity
 import com.ztech.order.model.entity.Seller as SellerEntity
+import com.ztech.order.model.entity.Tracker as PurchaseItemStatusEntity
 
 
 @Service
 class OrderServiceImpl(
     private val orderRepository: OrderRepository,
-    private val orderAddressRepository: OrderAddressRepository,
-    private val orderItemStatusRepository: OrderItemStatusRepository,
-    private val orderItemRepository: OrderItemRepository,
-    private val orderPaymentRepository: OrderPaymentRepository,
+    private val deliveryAddressRepository: DeliveryAddressRepository,
+    private val trackerRepository: TrackerRepository,
+    private val purchaseItemRepository: PurchaseItemRepository,
+    private val paymentRepository: PaymentRepository,
     private val transactionHandler: TransactionHandler
 ) {
 
@@ -40,7 +43,7 @@ class OrderServiceImpl(
         val order = orderRepository.save(OrderEntity().also {
             it.customer = CustomerEntity(customerId)
         })
-        val orderAddress = orderAddressRepository.save(OrderAddressEntity().also {
+        val orderAddress = deliveryAddressRepository.save(DeliveryAddressEntity().also {
             it.order = order
             it.name = savedAddress.name
             it.mobile = savedAddress.mobile
@@ -52,16 +55,16 @@ class OrderServiceImpl(
             it.country = savedAddress.country
             it.pincode = savedAddress.pincode
         })
-        val orderItems = orderItemRepository.saveAll(
+        val purchaseItems = purchaseItemRepository.saveAll(
             carts.map { cart ->
-                OrderItemEntity().also { item ->
+                PurchaseItemEntity().also { item ->
                     item.order = order
                     item.quantity = cart.quantity
                     item.price = cart.inventory!!.price.toBigDecimal()
-                    item.seller = SellerEntity(cart.inventory.seller!!.sellerId).also {
+                    item.seller = SellerEntity(cart.inventory.seller!!.id).also {
                         it.name = cart.inventory.seller.name
                     }
-                    item.product = ProductEntity(cart.inventory.product!!.productId).also {
+                    item.product = ProductEntity(cart.inventory.product!!.id).also {
                         it.name = cart.inventory.product.name
                         it.category = cart.inventory.product.category
                         it.measure = Measure.valueOf(cart.inventory.product.measure.uppercase())
@@ -70,77 +73,101 @@ class OrderServiceImpl(
                 }
             }
         )
-        val orderItemStatuses = orderItemStatusRepository.saveAll(orderItems.map { item ->
-            OrderItemStatusEntity().also {
-                it.orderItem = item
-                it.status = OrderItemStatusType.CREATED
+        val purchaseItemStatuses = trackerRepository.saveAll(purchaseItems.map { item ->
+            PurchaseItemStatusEntity().also {
+                it.purchaseItem = item
+                it.status = TrackerType.CREATED
             }
-        }).groupBy { it.orderItem.orderItemId }
-        val orderPayment = orderPaymentRepository.save(OrderPaymentEntity().also {
+        }).groupBy { it.purchaseItem.id }
+        val orderPayment = paymentRepository.save(OrderPaymentEntity().also {
             it.order = order
             it.status = PaymentStatus.PENDING
             it.method = PaymentMethod.valueOf(paymentMethod.uppercase())
-            it.amount = orderItems.sumOf { item -> (item.price * item.quantity.toBigDecimal()) }
+            it.amount = purchaseItems.sumOf { item -> (item.price * item.quantity.toBigDecimal()) }
         })
         order.also {
-            it.orderItems.forEach { item ->
-                item.statuses = orderItemStatuses.getOrDefault(item.orderItemId, emptyList()).toMutableSet()
+            it.address = orderAddress
+            it.purchaseItems = purchaseItems.toMutableSet()
+            it.purchaseItems.forEach { item ->
+                item.trackers = purchaseItemStatuses.getOrDefault(item.id, emptyList()).toMutableSet()
             }
-            it.orderItems = orderItems.toMutableSet()
-            it.orderPayment = orderPayment
-            it.orderAddress = orderAddress
+            it.payment = orderPayment
         }.toDomain()
     }
 
     fun getOrdersByCustomerId(customerId: Int) =
-        orderRepository.findByCustomerCustomerId(customerId).map { it.toDomain() }
+        orderRepository.findByCustomerId(customerId)
+            .map { it.toDomain(_payment = false, _seller = false, _address = false, _tracker = false) }
 
-    fun getOrderByOrderId(orderId: Int) =
-        orderRepository.findByOrderId(orderId).toDomain()
+    fun getOrderByCustomerIdAndOrderId(customerId: Int, orderId: Int) =
+        orderRepository.findByIdAndCustomerId(orderId, customerId).getOrElse {
+            throw ResourceNotFoundException("Order not found")
+        }.toDomain()
 
     fun getOrderBySellerId(sellerId: Int) =
-        orderRepository.findByOrderItemsSellerSellerIdAndOrderPaymentStatus(sellerId, PaymentStatus.SUCCESS)
-            .map { it.toDomain(_payment = false, _seller = false) }
+        orderRepository.findByPurchaseItemsSellerIdAndPaymentStatus(sellerId, PaymentStatus.SUCCESS)
+            .map { it.toDomain(_payment = false, _seller = false, _address = false, _tracker = false) }
 
     fun getOrderBySellerIdAndOrderId(sellerId: Int, orderId: Int) =
-        orderRepository.findByOrderItemsSellerSellerIdAndOrderIdAndOrderPaymentStatus(
-            sellerId,
+        orderRepository.findByIdAndPurchaseItemsSellerIdAndPaymentStatus(
             orderId,
+            sellerId,
             PaymentStatus.SUCCESS
-        )
-            .toDomain(_payment = false, _seller = false)
+        ).getOrElse {
+            throw ResourceNotFoundException("Order not found")
+        }.toDomain(_payment = false, _seller = false)
 
     fun getExpiredOrders() =
-        orderRepository.findByOrderPaymentStatusAndCreatedAtLessThan(
-            PaymentStatus.PENDING,
-            LocalDateTime.now().minusMinutes(5)
-        ).map { it.toDomain() }
+        orderRepository.findByCreatedAtLessThanAndPaymentStatus(
+            LocalDateTime.now().minusMinutes(5),
+            PaymentStatus.PENDING
+        ).map { it.toDomain(_payment = false, _address = false, _tracker = false) }
 
-
-    fun updateOrderByOrderId(orderId: Int, transactionId: String) = transactionHandler.execute {
-        orderPaymentRepository.updateTransactionIdByOrderId(
+    fun updateOrderByCustomerIdAndOrderId(
+        customerId: Int, orderId: Int, transactionId: String
+    ) = transactionHandler.execute {
+        paymentRepository.updateByOrderIdAndCustomerId(
             orderId,
+            customerId,
             transactionId,
             LocalDateTime.now(),
             PaymentStatus.SUCCESS
         )
     }
 
-    fun updateOrderItemStatusBySellerIdAndOrderItemId(sellerId: Int, orderItemId: Int, status: String) =
-        transactionHandler.execute {
-            orderItemStatusRepository.save(OrderItemStatusEntity().also {
-                it.orderItem = OrderItemEntity(orderItemId)
-                it.status = OrderItemStatusType.valueOf(status.uppercase())
+    fun updatePurchaseItemStatusBySellerIdAndPurchaseItemId(
+        sellerId: Int, purchaseItemId: Int, status: String
+    ) = transactionHandler.execute {
+        val order = orderRepository.findByPurchaseItemsIdAndPurchaseItemsSellerIdAndPaymentStatus(
+            purchaseItemId,
+            sellerId,
+            PaymentStatus.SUCCESS
+        ).getOrElse {
+            throw ResourceNotFoundException("Order not found")
+        }
+        val updateStatus = TrackerType.valueOf(status.uppercase())
+        val currentStatus = order.purchaseItems.first().trackers.maxByOrNull { it.date }!!.status
+        val isValidTransition = when (currentStatus) {
+            TrackerType.CREATED -> updateStatus == TrackerType.CONFIRMED
+            TrackerType.CONFIRMED -> updateStatus == TrackerType.DISPATCHED
+            TrackerType.DISPATCHED -> updateStatus == TrackerType.DELIVERED
+            else -> currentStatus != TrackerType.DELIVERED
+        }
+        if (isValidTransition) {
+            trackerRepository.save(PurchaseItemStatusEntity().also {
+                it.purchaseItem = PurchaseItemEntity(purchaseItemId)
+                it.status = TrackerType.valueOf(status.uppercase())
             })
+        } else {
+            throw RequestInvalidException("Invalid tracker update data")
         }
+    }
 
-    fun deleteOrder(orderId: Int, orderItemIds: List<Int>) = transactionHandler.execute {
-        orderPaymentRepository.deleteByOrderId(orderId)
-        orderItemIds.forEach { orderItemId ->
-            orderItemStatusRepository.deleteByOrderItemId(orderItemId)
-        }
-        orderItemRepository.deleteByOrderId(orderId)
+    fun deleteOrder(orderId: Int, purchaseItemIds: List<Int>) = transactionHandler.execute {
+        paymentRepository.deleteByOrderId(orderId)
+        trackerRepository.deleteByPurchaseItemId(purchaseItemIds)
+        purchaseItemRepository.deleteAllByIdInBatch(purchaseItemIds)
+        deliveryAddressRepository.deleteByOrderId(orderId)
         orderRepository.deleteById(orderId)
-        orderAddressRepository.deleteByOrderId(orderId)
     }
 }

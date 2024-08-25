@@ -16,6 +16,7 @@ import com.ztech.order.model.entity.Seller as SellerEntity
 @Service
 class InventoryServiceImpl(
     private val inventoryRepository: InventoryRepository,
+    private val cartService: CartServiceImpl,
     private val transactionHandler: TransactionHandler
 ) {
     fun createInventory(sellerId: Int, productId: Int, quantity: Int, price: Double) =
@@ -24,41 +25,42 @@ class InventoryServiceImpl(
             inventory.product = ProductEntity(productId)
             inventory.quantity = quantity
             inventory.price = price.toBigDecimal()
-        }).toDomain(false, false)
+        }).toDomain(_product = false, _seller = false)
 
     fun getInventoriesByProductName(name: String, page: Int, pageSize: Int) =
         inventoryRepository.findByProductNameContainingIgnoreCase(name, PageRequest.of(page, pageSize))
             .map { it.toDomain() }
 
     fun getInventoriesBySellerId(sellerId: Int, page: Int, pageSize: Int) =
-        inventoryRepository.findBySellerSellerId(sellerId, PageRequest.of(page, pageSize))
-            .map { it.toDomain(seller = false) }
+        inventoryRepository.findBySellerId(sellerId, PageRequest.of(page, pageSize))
+            .map { it.toDomain(_seller = false) }
 
     fun getInventoryByInventoryId(inventoryId: Int) =
-        inventoryRepository.findByInventoryId(inventoryId).toDomain()
+        inventoryRepository.findById(inventoryId).getOrElse {
+            throw ResourceNotFoundException("Inventory not found")
+        }.toDomain()
 
     fun getInventoryBySellerIdAndProductId(sellerId: Int, productId: Int) =
-        inventoryRepository.findBySellerSellerIdAndProductProductId(sellerId, productId).toDomain(seller = false)
+        inventoryRepository.findBySellerIdAndProductId(sellerId, productId).getOrElse {
+            throw ResourceNotFoundException("Inventory not found")
+        }.toDomain(_seller = false)
+
 
     fun getInventoryBySellerIdAndInventoryId(sellerId: Int, inventoryId: Int) =
-        inventoryRepository.findBySellerSellerIdAndInventoryId(sellerId, inventoryId).toDomain(seller = false)
-
-    fun updateInventoryByInventoryId(
-        inventoryId: Int, quantityChange: Int, price: Double
-    ) = this.transactionHandler.execute {
-        val inventory = inventoryRepository.findById(inventoryId).getOrElse {
+        inventoryRepository.findByIdAndSellerId(inventoryId, sellerId).getOrElse {
             throw ResourceNotFoundException("Inventory not found")
-        }.toDomain(false, false)
-        this.updateQuantityAndPriceByInventory(inventory, quantityChange, price)
-    }
+        }.toDomain(_seller = false)
 
-    fun updateQuantityAndPriceByInventory(
-        inventory: InventoryDomain, quantityChange: Int, price: Double
+    fun updateInventoryByInventoryIdAndSellerId(
+        sellerId: Int, inventoryId: Int, quantityChange: Int, price: Double
     ) = this.transactionHandler.execute {
-        val newQuantity = inventory.quantity + quantityChange
+        val quantity = inventoryRepository.findQuantityByIdAndSellerId(inventoryId, sellerId).getOrElse {
+            throw ResourceNotFoundException("Inventory not found")
+        }
+        val newQuantity = quantity + quantityChange
         when {
             newQuantity >= 0 ->
-                inventoryRepository.updateQuantityAndPriceByInventoryId(inventory.inventoryId, quantityChange, price)
+                inventoryRepository.updateById(inventoryId, quantityChange, price)
             else -> throw RequestInvalidException("Quantity cannot be negative")
         }
     }
@@ -69,13 +71,14 @@ class InventoryServiceImpl(
         val newQuantity = inventory.quantity + quantityChange
         when {
             newQuantity >= 0 ->
-                inventoryRepository.updateQuantityByInventoryId(inventory.inventoryId, quantityChange)
-            else -> throw RequestInvalidException("Quantity cannot be negative")
+                inventoryRepository.updateById(inventory.id, quantityChange)
+            else -> throw RequestInvalidException("Inventory not enough")
         }
     }
 
     fun deleteInventory(sellerId: Int, inventoryId: Int) = this.transactionHandler.execute {
-        inventoryRepository.deleteBySellerSellerIdAndInventoryId(sellerId, inventoryId)
+        cartService.deleteCartByInventoryId(inventoryId)
+        inventoryRepository.deleteByIdAndSellerId(inventoryId, sellerId)
     }
 
 }

@@ -1,9 +1,11 @@
 package com.ztech.order.service
 
 import com.ztech.order.component.TransactionHandler
+import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.toDomain
 import com.ztech.order.repository.AccountRepository
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrElse
 import com.ztech.order.model.entity.Account as AccountEntity
 
 @Service
@@ -21,14 +23,18 @@ class AccountServiceImpl(
     }).toDomain()
 
     fun getAccountByAccountId(accountId: Int) =
-        accountRepository.findByAccountId(accountId).toDomain()
+        accountRepository.findById(accountId).getOrElse {
+            throw ResourceNotFoundException("Account not found")
+        }.toDomain()
 
-    fun getAccountByUsername(username: String) =
-        accountRepository.findByUsername(username).toDomain()
+//    fun getAccountByUsername(username: String) =
+//        accountRepository.findByUsername(username).getOrElse {
+//            throw ResourceNotFoundException("Account not found")
+//        }.toDomain()
 
     fun updateAccount(
         accountId: Int, email: String?, mobile: String?, password: String?
     ) = transactionHandler.execute {
-        accountRepository.updateAccountByAccountId(accountId, password, email, mobile)
+        accountRepository.updateById(accountId, password, email, mobile)
     }
 }

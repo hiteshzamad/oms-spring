@@ -38,7 +38,7 @@ class CustomerCartController(
         @PathVariable customerId: Int,
         @PathVariable cartId: Int
     ): ResponseEntity<Response> {
-        val response = cartService.getCartByCustomerIdAndCartId(customerId, cartId)
+        val response = cartService.getCartByCartIdAndCustomerId(cartId, customerId)
         return responseSuccess(response.toMap())
     }
 
@@ -49,7 +49,7 @@ class CustomerCartController(
         @RequestBody cart: CartUpdateRequest
     ): ResponseEntity<Response> {
         val (quantityChange) = cart
-        cartService.updateCartByCartId(cartId, quantityChange)
+        cartService.updateCartByCartIdAndCustomerId(cartId, customerId, quantityChange)
         return responseSuccess()
     }
 
@@ -58,7 +58,7 @@ class CustomerCartController(
         @PathVariable customerId: Int,
         @PathVariable cartId: Int,
     ): ResponseEntity<Response> {
-        cartService.deleteCart(customerId, cartId)
+        cartService.deleteCartByCartIdAndCustomerId(cartId, customerId)
         return responseSuccess()
     }
 
