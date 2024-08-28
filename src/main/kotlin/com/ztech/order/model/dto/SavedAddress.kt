@@ -1,6 +1,9 @@
 package com.ztech.order.model.dto
 
+import com.ztech.order.model.validator.ValidName
+
 data class SavedAddressCreateRequest(
+    @field:ValidName
     val name: String,
     val mobile: String,
     val address1: String,

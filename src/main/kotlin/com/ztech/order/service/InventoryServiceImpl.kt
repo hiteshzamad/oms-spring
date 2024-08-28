@@ -4,7 +4,7 @@ import com.ztech.order.component.TransactionHandler
 import com.ztech.order.exception.RequestInvalidException
 import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.toDomain
-import com.ztech.order.repository.InventoryRepository
+import com.ztech.order.repository.jpa.InventoryRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse

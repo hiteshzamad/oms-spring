@@ -4,13 +4,17 @@ import com.ztech.order.model.dto.TrackerUpdateRequest
 import com.ztech.order.model.response.Response
 import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.toMap
+import com.ztech.order.model.validator.ValidId
 import com.ztech.order.service.CheckoutServiceImpl
 import com.ztech.order.service.OrderServiceImpl
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/sellers/{sellerId}/orders")
+@PreAuthorize("#sellerId == authentication.principal.sid")
 class SellerOrderController(
     private val checkoutService: CheckoutServiceImpl,
     private val orderService: OrderServiceImpl
@@ -18,7 +22,7 @@ class SellerOrderController(
 
     @GetMapping
     fun getOrders(
-        @PathVariable sellerId: Int
+        @PathVariable @ValidId sellerId: Int
     ): ResponseEntity<Response> {
         val response = orderService.getOrderBySellerId(sellerId)
         return responseSuccess(mapOf("orders" to response.map { it.toMap() }))
@@ -26,8 +30,8 @@ class SellerOrderController(
 
     @GetMapping("/{orderId}")
     fun getOrder(
-        @PathVariable sellerId: Int,
-        @PathVariable orderId: Int
+        @PathVariable @ValidId sellerId: Int,
+        @PathVariable @ValidId orderId: Int
     ): ResponseEntity<Response> {
         val response = orderService.getOrderBySellerIdAndOrderId(sellerId, orderId)
         return responseSuccess(response.toMap())
@@ -35,9 +39,9 @@ class SellerOrderController(
 
     @PutMapping("/{orderId}")
     fun updateOrder(
-        @PathVariable sellerId: Int,
-        @PathVariable orderId: Int,
-        @RequestBody purchaseItem: TrackerUpdateRequest
+        @PathVariable @ValidId sellerId: Int,
+        @PathVariable @ValidId orderId: Int,
+        @RequestBody @Valid purchaseItem: TrackerUpdateRequest
     ): ResponseEntity<Response> {
         val (purchaseItemId, status) = purchaseItem
         orderService.updatePurchaseItemStatusBySellerIdAndPurchaseItemId(sellerId, purchaseItemId, status)

@@ -3,7 +3,7 @@ package com.ztech.order.service
 import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.entity.Account
 import com.ztech.order.model.toDomain
-import com.ztech.order.repository.SellerRepository
+import com.ztech.order.repository.jpa.SellerRepository
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse
 import com.ztech.order.model.entity.Seller as SellerEntity

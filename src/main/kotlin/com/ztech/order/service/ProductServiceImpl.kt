@@ -3,7 +3,7 @@ package com.ztech.order.service
 import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.common.Measure
 import com.ztech.order.model.toDomain
-import com.ztech.order.repository.ProductRepository
+import com.ztech.order.repository.jpa.ProductRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse

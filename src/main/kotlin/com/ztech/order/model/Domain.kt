@@ -2,13 +2,15 @@ package com.ztech.order.model
 
 import com.ztech.order.model.entity.*
 
-fun Account.toDomain() = com.ztech.order.model.domain.Account(
+fun Account.toDomain(_customer: Boolean = true, _seller: Boolean = true) = com.ztech.order.model.domain.Account(
     id = id!!,
     username = this.username,
     password = this.password,
     email = this.email,
     mobile = this.mobile,
-    createdAt = this.createdAt
+    createdAt = this.createdAt,
+    customer = if (_customer) customer?.toDomain() else null,
+    seller = if (_seller) seller?.toDomain() else null
 )
 
 fun Customer.toDomain() = com.ztech.order.model.domain.Customer(

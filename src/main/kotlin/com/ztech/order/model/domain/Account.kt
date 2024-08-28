@@ -8,5 +8,7 @@ data class Account(
     val password: String,
     val email: String?,
     val mobile: String?,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val customer: Customer?,
+    val seller: Seller?
 )

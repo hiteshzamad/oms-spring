@@ -4,7 +4,9 @@ import com.ztech.order.model.dto.ProductCreateRequest
 import com.ztech.order.model.response.Response
 import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.toMap
+import com.ztech.order.model.validator.ValidId
 import com.ztech.order.service.ProductServiceImpl
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -16,7 +18,7 @@ class ProductController(
 
     @PostMapping
     fun createProduct(
-        @RequestBody product: ProductCreateRequest
+        @RequestBody @Valid product: ProductCreateRequest
     ): ResponseEntity<Response> {
         val (name, category, measure, size) = product
         val response = productService.createProduct(name, category, measure, size)
@@ -35,7 +37,7 @@ class ProductController(
 
     @GetMapping("/{productId}")
     fun getProduct(
-        @PathVariable productId: Int
+        @PathVariable @ValidId productId: Int
     ): ResponseEntity<Response> {
         val response = productService.getProduct(productId)
         return responseSuccess(response.toMap())

@@ -1,6 +1,7 @@
-package com.ztech.order.repository
+package com.ztech.order.repository.jpa
 
 import com.ztech.order.model.entity.Account
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -10,6 +11,11 @@ import java.util.*
 
 @Repository
 interface AccountRepository : JpaRepository<Account, Int> {
+
+    @EntityGraph("AccountWithCustomerAndSeller")
+    override fun findById(id: Int): Optional<Account>
+
+    @EntityGraph("AccountWithCustomerAndSeller")
     fun findByUsername(username: String): Optional<Account>
 
     @Modifying

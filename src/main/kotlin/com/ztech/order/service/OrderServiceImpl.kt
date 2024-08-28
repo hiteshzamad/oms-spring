@@ -8,7 +8,7 @@ import com.ztech.order.model.common.PaymentMethod
 import com.ztech.order.model.common.PaymentStatus
 import com.ztech.order.model.common.TrackerType
 import com.ztech.order.model.toDomain
-import com.ztech.order.repository.*
+import com.ztech.order.repository.jpa.*
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrElse

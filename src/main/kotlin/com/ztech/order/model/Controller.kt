@@ -6,7 +6,9 @@ fun Account.toMap() = mapOf(
     "accountId" to this.id,
     "username" to this.username,
     "email" to this.email,
-    "mobile" to this.mobile
+    "mobile" to this.mobile,
+    "customer" to this.customer?.toMap(),
+    "seller" to this.seller?.toMap()
 )
 
 fun Customer.toMap() = mapOf(

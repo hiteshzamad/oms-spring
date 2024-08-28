@@ -1,4 +1,4 @@
-package com.ztech.order.repository
+package com.ztech.order.repository.jpa
 
 import com.ztech.order.model.entity.Product
 import org.springframework.data.domain.PageRequest

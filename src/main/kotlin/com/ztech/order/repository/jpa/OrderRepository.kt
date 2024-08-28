@@ -1,4 +1,4 @@
-package com.ztech.order.repository
+package com.ztech.order.repository.jpa
 
 import com.ztech.order.model.common.PaymentStatus
 import com.ztech.order.model.entity.Order

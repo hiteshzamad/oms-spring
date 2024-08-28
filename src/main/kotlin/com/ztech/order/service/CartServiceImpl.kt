@@ -4,7 +4,7 @@ import com.ztech.order.component.TransactionHandler
 import com.ztech.order.exception.RequestInvalidException
 import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.toDomain
-import com.ztech.order.repository.CartRepository
+import com.ztech.order.repository.jpa.CartRepository
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse
 import com.ztech.order.model.entity.Cart as CartEntity

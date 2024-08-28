@@ -3,6 +3,7 @@ package com.ztech.order.controller
 import com.ztech.order.model.response.Response
 import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.toMap
+import com.ztech.order.model.validator.ValidId
 import com.ztech.order.service.InventoryServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -25,7 +26,7 @@ class InventoryController(
 
     @GetMapping("/{inventoryId}")
     fun getInventory(
-        @PathVariable inventoryId: Int
+        @PathVariable @ValidId inventoryId: Int
     ): ResponseEntity<Response> {
         val response = inventoryService.getInventoryByInventoryId(inventoryId)
         return responseSuccess(response.toMap())

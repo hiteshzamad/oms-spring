@@ -4,6 +4,13 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
+@NamedEntityGraph(
+    name = "AccountWithCustomerAndSeller",
+    attributeNodes = [
+        NamedAttributeNode("customer"),
+        NamedAttributeNode("seller"),
+    ]
+)
 @Table(
     name = "account", uniqueConstraints = [
         UniqueConstraint(name = "unicst_username", columnNames = ["username"]),
@@ -22,7 +29,7 @@ data class Account(
     @Column(name = "username", length = 32, nullable = false, updatable = false)
     lateinit var username: String
 
-    @Column(name = "password", length = 255, nullable = false)
+    @Column(name = "password", length = 1024, nullable = false)
     lateinit var password: String
 
     @Column(name = "email", length = 64)
@@ -30,4 +37,11 @@ data class Account(
 
     @Column(name = "mobile", length = 15)
     var mobile: String? = null
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "account")
+    var customer: Customer? = null
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "account")
+    var seller: Seller? = null
+
 }
