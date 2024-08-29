@@ -1,6 +1,6 @@
 package com.ztech.order.model.dto
 
-import com.ztech.order.model.validator.ValidId
+import com.ztech.order.validator.ValidId
 import jakarta.validation.constraints.Min
 
 data class CartCreateRequest(

@@ -1,4 +1,4 @@
-package com.ztech.order.component
+package com.ztech.order.config
 
 import com.ztech.order.exception.*
 import com.ztech.order.model.response.Response

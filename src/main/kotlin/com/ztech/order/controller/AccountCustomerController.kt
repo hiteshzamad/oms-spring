@@ -4,7 +4,7 @@ import com.ztech.order.model.dto.CustomerCreateRequest
 import com.ztech.order.model.response.Response
 import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.toMap
-import com.ztech.order.model.validator.ValidId
+import com.ztech.order.validator.ValidId
 import com.ztech.order.service.CustomerServiceImpl
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity

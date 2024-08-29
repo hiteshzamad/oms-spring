@@ -4,7 +4,7 @@ import com.ztech.order.component.TransactionHandler
 import com.ztech.order.exception.ResourceNotFoundException
 import com.ztech.order.model.toDomain
 import com.ztech.order.repository.jpa.AccountRepository
-import com.ztech.order.util.CryptoAES
+import com.ztech.order.util.CryptoAESUtil
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse
@@ -14,7 +14,7 @@ import com.ztech.order.model.entity.Account as AccountEntity
 class AccountServiceImpl(
     private val accountRepository: AccountRepository,
     private val transactionHandler: TransactionHandler,
-    private val cryptoPassword: CryptoAES,
+    private val cryptoPassword: CryptoAESUtil,
     private val passwordEncoder: PasswordEncoder
 ) {
     fun createAccount(

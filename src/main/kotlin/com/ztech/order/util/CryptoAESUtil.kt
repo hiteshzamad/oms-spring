@@ -1,20 +1,20 @@
 package com.ztech.order.util
 
+import java.util.*
 import java.util.Base64.Decoder
 import java.util.Base64.Encoder
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-class CryptoAES(
-    key: String,
-    private val encoder: Encoder,
-    private val decoder: Decoder
-) {
+class CryptoAESUtil(encryptionKey: String) {
+
+    private val encoder: Encoder = Base64.getEncoder()
+    private val decoder: Decoder = Base64.getDecoder()
     private val encryptCipher: Cipher = Cipher.getInstance("AES")
     private val decryptCipher: Cipher = Cipher.getInstance("AES")
 
     init {
-        val keySpec = SecretKeySpec(key.toByteArray(), "AES")
+        val keySpec = SecretKeySpec(encryptionKey.toByteArray(), "AES")
         encryptCipher.init(Cipher.ENCRYPT_MODE, keySpec)
         decryptCipher.init(Cipher.DECRYPT_MODE, keySpec)
     }

@@ -1,24 +1,21 @@
-package com.ztech.order.service
+package com.ztech.order.auth
 
-import com.ztech.order.model.domain.AuthenticationDetails
 import com.ztech.order.repository.jpa.AccountRepository
-import com.ztech.order.util.CryptoAES
+import com.ztech.order.util.CryptoAESUtil
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.stereotype.Service
 
-@Service
-class AuthenticationService(
+class DaoAuthenticationService(
     private val accountRepository: AccountRepository,
-    private val cryptoPassword: CryptoAES
+    private val cryptoPassword: CryptoAESUtil
 ) : UserDetailsService {
 
     override fun loadUserByUsername(username: String): UserDetails {
         val optional = accountRepository.findByUsername(username)
         if (optional.isPresent) {
             val account = optional.get()
-            return AuthenticationDetails(
+            return DaoAuthentication(
                 aid = account.id!!,
                 cid = account.customer?.id,
                 sid = account.seller?.id,

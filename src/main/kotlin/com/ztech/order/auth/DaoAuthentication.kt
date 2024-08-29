@@ -1,9 +1,9 @@
-package com.ztech.order.model.domain
+package com.ztech.order.auth
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class AuthenticationDetails(
+class DaoAuthentication(
     val aid: Int,
     val cid: Int?,
     val sid: Int?,

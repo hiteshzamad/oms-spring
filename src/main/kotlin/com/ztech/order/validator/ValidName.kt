@@ -1,4 +1,4 @@
-package com.ztech.order.model.validator
+package com.ztech.order.validator
 
 import jakarta.validation.Constraint
 import jakarta.validation.ConstraintValidator

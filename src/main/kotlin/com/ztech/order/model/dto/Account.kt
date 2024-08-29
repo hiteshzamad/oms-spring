@@ -1,7 +1,7 @@
 package com.ztech.order.model.dto
 
-import com.ztech.order.model.validator.ValidPassword
-import com.ztech.order.model.validator.ValidUsername
+import com.ztech.order.validator.ValidPassword
+import com.ztech.order.validator.ValidUsername
 
 data class AccountCreateRequest(
     @field:ValidUsername

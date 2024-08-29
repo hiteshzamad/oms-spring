@@ -5,7 +5,7 @@ import com.ztech.order.model.dto.OrderUpdateRequest
 import com.ztech.order.model.response.Response
 import com.ztech.order.model.response.responseSuccess
 import com.ztech.order.model.toMap
-import com.ztech.order.model.validator.ValidId
+import com.ztech.order.validator.ValidId
 import com.ztech.order.service.CheckoutServiceImpl
 import com.ztech.order.service.OrderServiceImpl
 import jakarta.validation.Valid
